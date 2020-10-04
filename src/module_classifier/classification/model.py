@@ -12,7 +12,7 @@ class Model:
     def __init__(self, model_path: str):
         self.model = fasttext.load_model(path=model_path)
 
-    def predict(
+    def predict_row(
         self, row: Dict[str, str], k: int = 1
     ) -> List[Tuple[str, float]]:
         return self.predict_text(fasttext_line(row), k)

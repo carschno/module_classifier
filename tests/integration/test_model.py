@@ -67,10 +67,10 @@ def test_init(model_path, expected_exception):
         "k=2",
     ],
 )
-def test_predict(row, k, expected, exception):
+def test_predict_row(row, k, expected, exception):
     model = Model(TEST_MODEL)
     with exception:
-        assert model.predict(row, k) == expected
+        assert model.predict_row(row, k) == expected
 
 
 @pytest.mark.parametrize(
