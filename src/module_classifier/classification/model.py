@@ -15,12 +15,12 @@ class Model:
     def predict(
         self, row: Dict[str, str], k: int = 1
     ) -> List[Tuple[str, float]]:
-        text = fasttext_line(row)
+        return self.predict_text(fasttext_line(row), k)
 
+    def predict_text(self, text: str, k: int = 1) -> List[Tuple[str, float]]:
         labels: List[str]
         probabilities: List[float]
         labels, probabilities = self.model.predict(text, k)
-
         return list(zip(labels, probabilities))
 
     @classmethod

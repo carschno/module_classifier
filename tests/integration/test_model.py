@@ -10,7 +10,7 @@ from ..conftest import TEST_MODEL, does_not_raise
         ("/does/not/exist", pytest.raises(ValueError)),
         (TEST_MODEL, does_not_raise()),
     ],
-    ids=["Model file does not exist", "Model exists."],
+    ids=["Model file does not exist", "Model exists"],
 )
 def test_init(model_path, expected_exception):
     with expected_exception:
@@ -18,7 +18,7 @@ def test_init(model_path, expected_exception):
 
 
 @pytest.mark.parametrize(
-    "text,k,expected,exception",
+    "row,k,expected,exception",
     [
         ({}, 1, [], pytest.raises(ValueError)),
         ({"title": ""}, 1, [], pytest.raises(ValueError)),
@@ -67,10 +67,30 @@ def test_init(model_path, expected_exception):
         "k=2",
     ],
 )
-def test_predict(text, k, expected, exception):
+def test_predict(row, k, expected, exception):
     model = Model(TEST_MODEL)
     with exception:
-        assert model.predict(text, k) == expected
+        assert model.predict(row, k) == expected
+
+
+@pytest.mark.parametrize(
+    "text,k,expected",
+    [
+        (
+            "ai automation",
+            3,
+            [
+                ('__label__S6.M8', 1.0000090599060059),
+                ('__label__S6.M3', 1.056917153618997e-05),
+                ('__label__S6.M6', 1.0238982213195413e-05),
+            ],
+        )
+    ],
+    ids=["AI & Automation"],
+)
+def test_predict_text(text, k, expected):
+    model = Model(TEST_MODEL)
+    assert model.predict_text(text, k) == expected
 
 
 @pytest.mark.parametrize(
