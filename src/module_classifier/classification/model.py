@@ -1,6 +1,9 @@
+import logging
+import os
 from typing import Dict, List, Tuple
 
 import fasttext
+import requests
 
 from ..preprocess import fasttext_line
 
@@ -19,3 +22,14 @@ class Model:
         labels, probabilities = self.model.predict(text, k)
 
         return list(zip(labels, probabilities))
+
+    @classmethod
+    def download(cls, url: str, local_path: str):
+        if os.path.exists(local_path):
+            logging.info(
+                f"Local file '{local_path}' already exists, skipping download."
+            )
+        else:
+            # TODO: download remote model
+            raise NotImplementedError()
+        return cls(local_path)

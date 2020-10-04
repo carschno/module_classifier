@@ -71,3 +71,16 @@ def test_predict(text, k, expected, exception):
     model = Model(TEST_MODEL)
     with exception:
         assert model.predict(text, k) == expected
+
+
+@pytest.mark.parametrize(
+    "remote,local,expected_exception",
+    [
+        ("", TEST_MODEL, does_not_raise()),
+        ("", "", pytest.raises(NotImplementedError)),
+    ],
+    ids=["test model", "download"],
+)
+def test_download(remote, local, expected_exception):
+    with expected_exception:
+        assert isinstance(Model.download(remote, local), Model)
