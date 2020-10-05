@@ -1,9 +1,11 @@
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Optional
 
 CWD: Path = Path(__file__).parent
 
-TEST_MODEL: str = str(CWD / "data" / "model" / "fasttext.txt.model.bin")
+TEST_MODEL: Optional[str] = None
+
 
 @contextmanager
 def does_not_raise():
