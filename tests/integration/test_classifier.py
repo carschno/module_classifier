@@ -10,10 +10,8 @@ def test_init():
 
 
 @pytest.mark.parametrize(
-    "row,k,expected,exception",
+    "row,k,expected",
     [
-        ({}, 1, [], pytest.raises(ValueError)),
-        ({"title": ""}, 1, [], pytest.raises(ValueError)),
         (
             {
                 "item_title": "",
@@ -23,7 +21,6 @@ def test_init():
             },
             1,
             [('__label__S6.M1', 1.0000098943710327)],
-            does_not_raise(),
         ),
         (
             {
@@ -34,7 +31,6 @@ def test_init():
             },
             1,
             [('__label__S1.M1', 0.3548894226551056)],
-            does_not_raise(),
         ),
         (
             {
@@ -48,22 +44,14 @@ def test_init():
                 ('__label__S1.M1', 0.3548894226551056),
                 ('__label__S1.M12', 0.21194346249103546),
             ],
-            does_not_raise(),
         ),
     ],
-    ids=[
-        "empty input",
-        "missing fields",
-        "empty fields",
-        "test fields",
-        "k=2",
-    ],
+    ids=["empty fields", "test fields", "k=2"],
 )
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
-def test_predict_row(row, k, expected, exception):
+def test_predict_row(row, k, expected):
     model = Classifier(TEST_MODEL)
-    with exception:
-        assert model.predict_row(row, k) == expected
+    assert model.predict_row(row, k) == expected
 
 
 @pytest.mark.parametrize(
