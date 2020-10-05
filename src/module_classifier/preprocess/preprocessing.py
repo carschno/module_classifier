@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Dict, Literal
 
 from ..settings import (
     CLASS_FIELD,
@@ -7,6 +7,8 @@ from ..settings import (
     PUNCTUATION_CHARACTERS,
     TEXT_FIELDS,
 )
+
+LABEL_PREFIX: Literal["__label__"] = "__label__"
 
 
 def clean(s: str) -> str:
@@ -34,6 +36,6 @@ def fasttext_line(row: Dict[str, str]) -> str:
             raise ValueError(f"Missing input field: '{field}'.")
 
     return " ".join(
-        [f"__label__{row.get(CLASS_FIELD, '').upper()}"]
+        [f"{LABEL_PREFIX}{row.get(CLASS_FIELD, '').upper()}"]
         + [clean(row[key]) for key in TEXT_FIELDS]
     )

@@ -1,10 +1,11 @@
 import logging
 import os
-from typing import Dict, List, Tuple
+from typing import Dict, Iterable, List, Tuple
 
 import fasttext
 
 from ..preprocess import clean, fasttext_line
+from ..preprocess.preprocessing import LABEL_PREFIX
 from ..settings import DEFAULT_MODEL
 
 
@@ -21,7 +22,13 @@ class Classifier:
         labels: List[str]
         probabilities: List[float]
         labels, probabilities = self.model.predict(clean(text), k)
-        return list(zip(labels, probabilities))
+        return Classifier._post_process(zip(labels, probabilities))
+
+    @staticmethod
+    def _post_process(predictions: Iterable[Tuple[str, float]]):
+        return [
+            (label[len(LABEL_PREFIX) :], prob) for label, prob in predictions
+        ]
 
     @classmethod
     def download(cls, url: str, local_path: str = DEFAULT_MODEL):
