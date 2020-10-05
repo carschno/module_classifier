@@ -1,1 +1,1 @@
-from .preprocessing import fasttext_line
+from .preprocessing import fasttext_line, clean

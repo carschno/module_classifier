@@ -1,7 +1,7 @@
 import pytest
 
 from src.module_classifier.preprocess.preprocessing import clean, fasttext_line
-from tests.conftest import does_not_raise
+from ..conftest import does_not_raise
 
 
 @pytest.mark.parametrize(

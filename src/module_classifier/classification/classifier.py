@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 
 import fasttext
 
-from ..preprocess import fasttext_line
+from ..preprocess import clean, fasttext_line
 from ..settings import DEFAULT_MODEL
 
 
@@ -20,7 +20,7 @@ class Classifier:
     def predict_text(self, text: str, k: int = 1) -> List[Tuple[str, float]]:
         labels: List[str]
         probabilities: List[float]
-        labels, probabilities = self.model.predict(text, k)
+        labels, probabilities = self.model.predict(clean(text), k)
         return list(zip(labels, probabilities))
 
     @classmethod
