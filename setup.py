@@ -23,5 +23,5 @@ setuptools.setup(
     python_requires='>=3.8',
     # conda install -c conda-forge fasttext
     install_requires=["fasttext==0.9.2"],
-    # test_requires=["pytest-subtests==0.3.2", "pytest-mock==3.3.1"],
+    extras_require={"testing": ["pytest==6.1.0", "pytest-mock==3.3.1"]},
 )
