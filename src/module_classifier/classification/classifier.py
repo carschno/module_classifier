@@ -24,7 +24,7 @@ class Classifier:
         return list(zip(labels, probabilities))
 
     @classmethod
-    def download(cls, url: str, local_path: str):
+    def download(cls, url: str, local_path: str = DEFAULT_MODEL):
         if os.path.exists(local_path):
             logging.info(
                 f"Local file '{local_path}' already exists, skipping download."
