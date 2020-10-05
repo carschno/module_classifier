@@ -1,5 +1,8 @@
 import string
+from pathlib import Path
 from typing import Iterable
+
+CWD: Path = Path(__file__).parent
 
 TEXT_FIELDS: Iterable[str] = (
     "item_title",
@@ -10,3 +13,5 @@ TEXT_FIELDS: Iterable[str] = (
 CLASS_FIELD: str = "module_id_for_all"
 MIN_TOKEN_LENGTH: int = 3
 PUNCTUATION_CHARACTERS: str = string.punctuation + "–‒—‘’”“"
+
+DEFAULT_MODEL: str = str(CWD / "data" / "classifier.model.ftz")

@@ -2,9 +2,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Optional
 
+from src.module_classifier.settings import DEFAULT_MODEL
+
 CWD: Path = Path(__file__).parent
 
-TEST_MODEL: Optional[str] = None
+TEST_MODEL: Optional[str] = DEFAULT_MODEL
 
 
 @contextmanager

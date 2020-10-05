@@ -5,10 +5,11 @@ from typing import Dict, List, Tuple
 import fasttext
 
 from ..preprocess import fasttext_line
+from ..settings import DEFAULT_MODEL
 
 
 class Classifier:
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str = DEFAULT_MODEL):
         self.model = fasttext.load_model(path=model_path)
 
     def predict_row(
