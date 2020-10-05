@@ -3,12 +3,11 @@ import os
 from typing import Dict, List, Tuple
 
 import fasttext
-import requests
 
 from ..preprocess import fasttext_line
 
 
-class Model:
+class Classifier:
     def __init__(self, model_path: str):
         self.model = fasttext.load_model(path=model_path)
 

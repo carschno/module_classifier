@@ -1,12 +1,12 @@
 import pytest
 
-from src.module_classifier.classification.model import Model
+from src.module_classifier.classification.classifier import Classifier
 from ..conftest import TEST_MODEL, does_not_raise
 
 
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 def test_init():
-    assert isinstance(Model(TEST_MODEL), Model)
+    assert isinstance(Classifier(TEST_MODEL), Classifier)
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ def test_init():
 )
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 def test_predict_row(row, k, expected, exception):
-    model = Model(TEST_MODEL)
+    model = Classifier(TEST_MODEL)
     with exception:
         assert model.predict_row(row, k) == expected
 
@@ -83,7 +83,7 @@ def test_predict_row(row, k, expected, exception):
 )
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 def test_predict_text(text, k, expected):
-    model = Model(TEST_MODEL)
+    model = Classifier(TEST_MODEL)
     assert model.predict_text(text, k) == expected
 
 
@@ -98,4 +98,4 @@ def test_predict_text(text, k, expected):
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 def test_download(remote, local, expected_exception):
     with expected_exception:
-        assert isinstance(Model.download(remote, local), Model)
+        assert isinstance(Classifier.download(remote, local), Classifier)
