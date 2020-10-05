@@ -11,13 +11,20 @@ To predict the module(s) for a text, use the `Classifier.predict_text()`
 from module_classifier.classification import Classifier
 
 classifier = Classifier()
-classifier.predict_text("This is a text", k=3)
+c.predict_text("This text is about automation and AI", k=3)
 
-[('S3.M2', 0.5078761577606201), ('S3.M4', 0.456290066242218), ('S2.M3', 0.016183091327548027)]
+[('S6.M8', 0.9990239143371582),
+ ('S6.M2', 0.0004524348769336939),
+ ('S6.M9', 0.0002751499123405665)]
 ```
 
 The method returns a list of tuples where each tuple comprises the module and the respective model 
 confidence.
  
 The function parameter `k` determines the number of results.
-If `k` is set to 1 (default), only the most probably module is output.
+If `k` is set to 1 (default), only the most probable module is returned.
+
+The `predict_row()` method expects a row from a CSV file in the form of a 
+dictionary as input.
+It extracts the text fields and returns the same output format.
+
