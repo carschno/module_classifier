@@ -6,7 +6,7 @@ import fasttext
 
 from ..preprocess import clean, fasttext_line
 from ..preprocess.preprocessing import LABEL_PREFIX
-from ..settings import DEFAULT_MODEL, TEXT_FIELDS
+from ..settings import DEFAULT_MODEL
 
 
 class Classifier:
@@ -17,7 +17,7 @@ class Classifier:
         self,
         row: Dict[str, str],
         k: int = 1,
-        columns: Iterable[str] = TEXT_FIELDS,
+        columns: Iterable[str] = (),
     ) -> List[Tuple[str, float]]:
         """
         Predict label for a CSV row.
@@ -25,8 +25,8 @@ class Classifier:
         Args:
             row:    a dictionary
             k:  the number of predictions to output;
-                defaults to TEXT_FIELDS as specified in the settings.
-            columns:    a list of column names to extract text from
+            columns:    a list of column names to extract text from;
+                if not specified (or empty), uses all fields in the row.
 
         Returns:
                 a list of tuples where each tuple contains the predicted label

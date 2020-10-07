@@ -34,10 +34,13 @@ def fasttext_line(
     text_fields: Iterable[str] = TEXT_FIELDS,
     class_field: str = CLASS_FIELD,
 ) -> str:
-    # TODO: make row a TypedDict
-    for field in text_fields:
-        if field not in row:
-            raise ValueError(f"Missing input field: '{field}'.")
+    if text_fields:
+        # validate that specified text fields are present
+        for field in text_fields:
+            if field not in row:
+                raise ValueError(f"Missing input field: '{field}'.")
+    else:
+        text_fields = row.keys()
 
     return " ".join(
         [f"{LABEL_PREFIX}{row.get(class_field, '').upper()}"]
