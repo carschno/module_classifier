@@ -9,6 +9,7 @@ TEXT_FIELDS: Iterable[str] = (
     "authors",
     "publication_name",
     "abstract_description",
+    "excerpts_ts"
 )
 CLASS_FIELD: str = "module_id_for_all"
 MIN_TOKEN_LENGTH: int = 3

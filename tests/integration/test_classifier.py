@@ -10,7 +10,7 @@ def test_init():
 
 
 @pytest.mark.parametrize(
-    "row,k,expected",
+    "row,columns,k,expected",
     [
         (
             {
@@ -19,6 +19,12 @@ def test_init():
                 "publication_name": "",
                 "abstract_description": "",
             },
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
             1,
             [('S6.M4', 0.5502018928527832)],
         ),
@@ -29,6 +35,12 @@ def test_init():
                 "publication_name": "test publication",
                 "abstract_description": "test abstract",
             },
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
             1,
             [('S6.M5', 0.34261074662208557)],
         ),
@@ -39,6 +51,12 @@ def test_init():
                 "publication_name": "test publication",
                 "abstract_description": "test abstract",
             },
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
             2,
             [('S6.M5', 0.34261074662208557), ('S1.M1', 0.30089762806892395)],
         ),
@@ -46,9 +64,9 @@ def test_init():
     ids=["empty fields", "test fields", "k=2"],
 )
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
-def test_predict_row(row, k, expected):
+def test_predict_row(row, columns, k, expected):
     model = Classifier(TEST_MODEL)
-    assert model.predict_row(row, k) == expected
+    assert model.predict_row(row, k, columns=columns) == expected
 
 
 @pytest.mark.parametrize(

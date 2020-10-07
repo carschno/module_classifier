@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Literal
+from typing import Dict, Iterable, Literal
 
 from ..settings import (
     CLASS_FIELD,
@@ -29,13 +29,17 @@ def clean(s: str) -> str:
     )
 
 
-def fasttext_line(row: Dict[str, str]) -> str:
+def fasttext_line(
+    row: Dict[str, str],
+    text_fields: Iterable[str] = TEXT_FIELDS,
+    class_field: str = CLASS_FIELD,
+) -> str:
     # TODO: make row a TypedDict
-    for field in TEXT_FIELDS:
+    for field in text_fields:
         if field not in row:
             raise ValueError(f"Missing input field: '{field}'.")
 
     return " ".join(
-        [f"{LABEL_PREFIX}{row.get(CLASS_FIELD, '').upper()}"]
-        + [clean(row[key]) for key in TEXT_FIELDS]
+        [f"{LABEL_PREFIX}{row.get(class_field, '').upper()}"]
+        + [clean(row[key]) for key in text_fields]
     )

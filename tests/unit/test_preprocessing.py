@@ -32,10 +32,30 @@ def test_clean(text, expected):
 
 
 @pytest.mark.parametrize(
-    "row,expected,exception",
+    "row,columns,expected,exception",
     [
-        ({}, None, pytest.raises(ValueError)),
-        ({"title": ""}, None, pytest.raises(ValueError)),
+        (
+            {},
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
+            None,
+            pytest.raises(ValueError),
+        ),
+        (
+            {"title": ""},
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
+            None,
+            pytest.raises(ValueError),
+        ),
         (
             {
                 "item_title": "",
@@ -43,6 +63,12 @@ def test_clean(text, expected):
                 "publication_name": "",
                 "abstract_description": "",
             },
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
             "__label__    ",
             does_not_raise(),
         ),
@@ -53,12 +79,18 @@ def test_clean(text, expected):
                 "publication_name": "test publication",
                 "abstract_description": "test abstract",
             },
+            (
+                "item_title",
+                "authors",
+                "publication_name",
+                "abstract_description",
+            ),
             "__label__ test title test author test publication test abstract",
             does_not_raise(),
         ),
     ],
     ids=["empty row", "missing fields", "empty fields", "all fields"],
 )
-def test_fasttext_line(row, expected, exception):
+def test_fasttext_line(row, columns, expected, exception):
     with exception:
-        assert fasttext_line(row) == expected
+        assert fasttext_line(row, columns) == expected
