@@ -4,14 +4,13 @@ This is a Python module for a module classifier for The Syllabus.
 
 
 ## Usage
-
 To predict the module(s) for a text, use the `Classifier.predict_text()`
  method:
 ```
 from module_classifier.classification import Classifier
 
 classifier = Classifier()
-c.predict_text("This text is about automation and AI", k=3)
+classifier.predict_text("This text is about automation and AI", k=3)
 
 [('S6.M8', 0.9990239143371582),
  ('S6.M2', 0.0004524348769336939),

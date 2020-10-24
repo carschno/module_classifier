@@ -32,7 +32,7 @@ def clean(s: str) -> str:
 def fasttext_line(
     row: Dict[str, str],
     text_fields: Iterable[str] = TEXT_FIELDS,
-    class_field: str = CLASS_FIELD,
+    class_field: str = CLASS_FIELD
 ) -> str:
     if text_fields:
         # validate that specified text fields are present
