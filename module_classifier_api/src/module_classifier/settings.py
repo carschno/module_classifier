@@ -9,8 +9,10 @@ TEXT_FIELDS: Iterable[str] = (
     "authors",
     "publication_name",
     "abstract_description",
-    "excerpts_ts"
+    # "excerpts_ts",
+    "full_text",
 )
+
 CLASS_FIELD: str = "module_id_for_all"
 MIN_TOKEN_LENGTH: int = 3
 PUNCTUATION_CHARACTERS: str = string.punctuation + "–‒—‘’”“"

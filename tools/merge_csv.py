@@ -47,21 +47,25 @@ class CSVFile:
             f"#rows in individual CSVs ({len(self.rows)}, {len(other.rows)}) "
             f"before merge larger than after merge ({len(rows)})."
         )
-        if len(rows) >= max(len(self.rows), len(other.rows)):
-            LOGGER.warning("Found some duplicate lines.")
+
+        larger_input: int = max(len(self.rows), len(other.rows))
+        duplicates: int = len(rows) - larger_input
+        if duplicates > 0:
+            LOGGER.warning(f"Skipped {duplicates} duplicate lines.")
         return CSVFile(rows, all_fields, self.id_field)
 
     def write(self, f: IO):
         writer = csv.DictWriter(f, self.fieldnames)
         writer.writeheader()
         writer.writerows(self.rows)
-        LOGGER.info(f"Wrote {len(self.rows)} rows.")
+        LOGGER.info(f"Wrote {len(self.rows)} rows to {f.name}.")
 
     @classmethod
     def from_file(cls, f: IO, id_field: str):
+        LOGGER.info(f"Reading file {f.name}.")
         reader: csv.DictReader = csv.DictReader(f)
         rows = list(reader)
-        LOGGER.info(f"Read {len(rows)} rows.")
+        LOGGER.info(f"Read {len(rows)} rows from {f.name}.")
         return cls(rows, reader.fieldnames, id_field)
 
 
@@ -85,7 +89,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output", "-o", type=argparse.FileType("w"), help="The output file."
     )
+    parser.add_argument(
+        "--field-size-limit",
+        "-s",
+        type=int,
+        help="The maximum field size for CSV files.",
+        default=csv.field_size_limit(),
+    )
     args = parser.parse_args()
+
+    csv.field_size_limit(args.field_size_limit)
+    LOGGER.info(f"CSV field size limit set to {csv.field_size_limit()}.")
 
     merged: CSVFile = reduce(
         CSVFile.merge,
