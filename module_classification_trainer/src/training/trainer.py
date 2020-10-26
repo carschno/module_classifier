@@ -2,7 +2,7 @@ import csv
 import logging
 import os
 from tempfile import NamedTemporaryFile
-from typing import Collection, IO, Iterable, Mapping, Optional
+from typing import IO, Iterable, Mapping, Optional
 
 import fasttext
 from fasttext import FastText
@@ -20,10 +20,16 @@ class Trainer:
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__params = training_parameters
 
+    @property
+    def logger(self) -> logging.Logger:
+        return self.__logger
+
+
     def train_model(
         self,
         input_file: str,
         target_file: str,
+        *,
         text_fields: Iterable[str] = TEXT_FIELDS,
         class_field: str = CLASS_FIELD,
         quantize: bool = QUANTIZE,
@@ -46,11 +52,11 @@ class Trainer:
             self._write_training_file(
                 input_file, temp_file, text_fields, class_field
             )
-            model: FastText = self._train_model(
-                temp_file.name, target_file=None if quantize else target_file
-            )
             if quantize:
+                model: FastText = self._train_model(temp_file.name, None)
                 self._quantize(model, temp_file.name, target_file)
+            else:
+                self._train_model(temp_file.name, target_file)
 
     def _write_training_file(
         self,
@@ -83,7 +89,7 @@ class Trainer:
             self.__logger.info(
                 f"Writing trained model to file '{target_file}'..."
             )
-            model.save_model()
+            model.save_model(target_file)
         return model
 
     def _quantize(self, model: FastText, training_file: str, target_file: str):
