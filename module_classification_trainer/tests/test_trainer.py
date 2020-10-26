@@ -1,5 +1,6 @@
 import logging
 import os
+from contextlib import contextmanager
 from csv import DictWriter
 from tempfile import NamedTemporaryFile
 from typing import Dict, List
@@ -10,6 +11,11 @@ from module_classifier.settings import CLASS_FIELD, TEXT_FIELDS
 
 from src.settings import TRAINING_PARAMS
 from src.training.trainer import Trainer
+
+
+@contextmanager
+def does_not_raise():
+    yield
 
 
 @pytest.mark.parametrize(
@@ -168,7 +174,9 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
     ],
 )
 def test_train_model(caplog, input, quantize, expected_labels, expected_words):
-    trainer = Trainer({**TRAINING_PARAMS, "epoch": 1})
+    trainer = Trainer(
+        cpus=1, training_parameters={**TRAINING_PARAMS, "epoch": 1}
+    )
 
     with NamedTemporaryFile("w") as csvfile, NamedTemporaryFile(
         delete=False
@@ -193,3 +201,12 @@ def test_train_model(caplog, input, quantize, expected_labels, expected_words):
     assert model.labels == expected_labels
     assert model.words == expected_words
     os.remove(out)
+
+
+@pytest.mark.parametrize(
+    "cpus,expected_exception",
+    [(1, does_not_raise()), (1000000, pytest.raises(ValueError))],
+)
+def test_cpus(cpus, expected_exception):
+    with expected_exception:
+        Trainer(cpus=cpus)

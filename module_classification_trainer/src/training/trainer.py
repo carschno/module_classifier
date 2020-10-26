@@ -2,7 +2,7 @@ import csv
 import logging
 import os
 from tempfile import NamedTemporaryFile
-from typing import IO, Iterable, Mapping, Optional
+from typing import Dict, IO, Iterable, Optional
 
 import fasttext
 from fasttext import FastText
@@ -14,16 +14,33 @@ from ..settings import QUANTIZE, TRAINING_PARAMS
 
 class Trainer:
     def __init__(
-        self, training_parameters: Mapping[str, float] = TRAINING_PARAMS
+        self,
+        *,
+        cpus: Optional[int] = None,
+        training_parameters: Dict[str, float] = TRAINING_PARAMS,
     ):
-        """Initialize module classifier trainer. """
+        """Initialize module classifier trainer.
+
+        Args:
+            cpus: the number of cpus/threads to use for training;
+                defaults to the number of CPUs available on the system.
+            training_parameters: training parameters
+        """
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__params = training_parameters
+        if cpus:
+            cpu_count = os.cpu_count()
+            if cpus > cpu_count:
+                raise ValueError(
+                    f"Requested number of CPUs ({cpus}) must not exceed "
+                    f"number of available CPUs ({cpu_count})."
+                )
+            else:
+                self.__params["thread"] = cpus
 
     @property
     def logger(self) -> logging.Logger:
         return self.__logger
-
 
     def train_model(
         self,
