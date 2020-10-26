@@ -171,6 +171,39 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                 '</s>',
             ],
         ),
+        (
+            [
+                {
+                    "item_title": "test title",
+                    "authors": "test authors",
+                    "publication_name": "test publication",
+                    "abstract_description": "test abstract",
+                    "full_text": "test full text",
+                    "module_id_for_all": "test_module_1",
+                },
+                {
+                    "item_title": "test title two",
+                    "authors": "test authors two",
+                    "publication_name": "test publication two",
+                    "abstract_description": "test abstract two",
+                    "full_text": "test full text two",
+                    "module_id_for_all": "test_module_2",
+                },
+            ],
+            False,
+            ["__label__TEST_MODULE_1", "__label__TEST_MODULE_2"],
+            [
+                'test',
+                'two',
+                'title',
+                'authors',
+                'publication',
+                'abstract',
+                'full',
+                'text',
+                '</s>',
+            ],
+        ),
     ],
 )
 def test_train_model(caplog, input, quantize, expected_labels, expected_words):
