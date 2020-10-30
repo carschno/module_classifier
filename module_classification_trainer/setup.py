@@ -4,11 +4,11 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="module-classification-trainer",
+    name="module-trainer",
     version="0.0.1",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
-    description="Train a new  modules classifier for The Syllabus.",
+    description="Train a module classification model for The Syllabus.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(where="src", exclude=("tests",)),

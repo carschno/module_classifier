@@ -9,8 +9,8 @@ import pytest
 from fasttext import FastText
 from module_classifier.settings import CLASS_FIELD, TEXT_FIELDS
 
-from src.settings import TRAINING_PARAMS
-from src.training.trainer import Trainer
+from src.module_trainer.settings import TRAINING_PARAMS
+from src.module_trainer.training.trainer import Trainer
 
 
 @contextmanager
