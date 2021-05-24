@@ -9,7 +9,10 @@ To predict the module(s) for a text, use the `Classifier.predict_text()`
 ```
 from module_classifier.classification import Classifier
 
-classifier = Classifier()
+classifier = Classifier() # use the default model
+# Alternatively, specify a custom model file:
+classifier = Classifier(model_path=model_file_path)
+
 classifier.predict_text("This text is about automation and AI", k=3)
 
 [('S6.M8', 0.9990239143371582),
