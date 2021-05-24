@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="module-trainer",
-    version="0.0.1",
+    version="0.0.3",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
     description="Train a module classification model for The Syllabus.",
@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(where="src", exclude=("tests",)),
     package_dir={"": str("src")},
+    scripts=["src/train_module_classifier"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

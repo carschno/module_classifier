@@ -4,7 +4,15 @@ This is a Python module for training a model to be used in the module classifier
 
 ## Usage
 
-To train a new model:
+To train a new model, either use the `train_module_classifier` script:
+
+```shell
+train_module_classifier --input data.csv --output model.bin
+```
+
+Call the same script with `--help` to get more detailed instructions.
+
+Or use the Python module:
 
 ```python
 from module_trainer.training import Trainer
@@ -15,6 +23,9 @@ text_fields=("item_title","authors","publication_name","abstract_description")
 
 trainer = Trainer()
 trainer.train_model(input_csv, target_file=model_file, text_fields=text_fields)
+```
+The output should look like this:
+```
 Read 4M words
 Number of words:  157148
 Number of labels: 86
