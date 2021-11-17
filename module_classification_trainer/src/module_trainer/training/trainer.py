@@ -27,10 +27,12 @@ class Trainer:
             training_parameters: training parameters
         """
         self.__logger = logging.getLogger(self.__class__.__name__)
+        self.__logger.setLevel(logging.INFO)
+
         self.__params = training_parameters
         if cpus:
             cpu_count = os.cpu_count()
-            if cpus > cpu_count:
+            if cpu_count is not None and cpus > cpu_count:
                 raise ValueError(
                     f"Requested number of CPUs ({cpus}) must not exceed "
                     f"number of available CPUs ({cpu_count})."
@@ -66,14 +68,20 @@ class Trainer:
 
         """
         with NamedTemporaryFile("wt") as temp_file:
-            self._write_training_file(
-                input_file, temp_file, text_fields, class_field
-            )
+            self._write_training_file(input_file, temp_file, text_fields, class_field)
             if quantize:
                 model: FastText = self._train_model(temp_file.name, None)
                 self._quantize(model, temp_file.name, target_file)
             else:
                 self._train_model(temp_file.name, target_file)
+
+    def evaluate_model(self, input_file: str, model_file: str, **kwargs):
+        with NamedTemporaryFile("wt") as temp_file:
+            self._write_training_file(input_file, temp_file, TEXT_FIELDS, CLASS_FIELD)
+
+            self.logger.info("Loading model from '%s'", model_file)
+            model = FastText.load_model(model_file)
+            return model.test(temp_file.name, **kwargs)
 
     def _write_training_file(
         self,
@@ -83,7 +91,7 @@ class Trainer:
         class_field: str,
     ):
         self.__logger.info(f"Reading input file '{input_file}'...")
-        with open(input_file, newline='') as csvfile:
+        with open(input_file, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             lines: Iterable[str] = (
                 fasttext_line(row, text_fields, class_field)
@@ -91,21 +99,17 @@ class Trainer:
                 if row.get(class_field)
             )
             self.__logger.info(
-                f"Writing temporary training file to '{target_file.name}'..."
+                f"Writing temporary FastText file to '{target_file.name}'..."
             )
             for line in lines:
                 target_file.write(line + os.linesep)
         target_file.flush()
 
-    def _train_model(
-        self, training_file: str, target_file: Optional[str]
-    ) -> FastText:
+    def _train_model(self, training_file: str, target_file: Optional[str]) -> FastText:
         self.__logger.info("Training model...")
         model = fasttext.train_supervised(training_file, **self.__params)
         if target_file:
-            self.__logger.info(
-                f"Writing trained model to file '{target_file}'..."
-            )
+            self.__logger.info(f"Writing trained model to file '{target_file}'...")
             model.save_model(target_file)
         return model
 
