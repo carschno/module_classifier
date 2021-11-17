@@ -30,12 +30,13 @@ def does_not_raise():
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 }
             ],
             [
-                "__label__TEST_MODULE test title test authors test publication test abstract test full text"
+                "__label__TEST_MODULE test title test authors test publication test abstract test excerpt test description"
             ],
         ),
         (
@@ -45,21 +46,23 @@ def does_not_raise():
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 },
                 {
                     "item_title": "test title two",
                     "authors": "test authors two",
                     "publication_name": "test publication two",
                     "abstract_description": "test abstract two",
-                    "full_text": "test full text two",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt two",
+                    "yt_description": "test yt description two",
                 },
             ],
             [
-                "__label__TEST_MODULE test title test authors test publication test abstract test full text",
-                "__label__TEST_MODULE test title two test authors two test publication two test abstract two test full text two",
+                "__label__TEST_MODULE test title test authors test publication test abstract test excerpt test description",
+                "__label__TEST_MODULE test title two test authors two test publication two test abstract two test excerpt two test description two",
             ],
         ),
         (
@@ -69,13 +72,14 @@ def does_not_raise():
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 }
             ]
             * 20,
             [
-                "__label__TEST_MODULE test title test authors test publication test abstract test full text"
+                "__label__TEST_MODULE test title test authors test publication test abstract test excerpt test description"
             ]
             * 20,
         ),
@@ -112,30 +116,32 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 },
                 {
                     "item_title": "test title two",
                     "authors": "test authors two",
                     "publication_name": "test publication two",
                     "abstract_description": "test abstract two",
-                    "full_text": "test full text two",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt two",
+                    "yt_description": "test yt description two",
                 },
             ],
             False,
             ["__label__TEST_MODULE"],
             [
-                'test',
-                'two',
-                'title',
-                'authors',
-                'publication',
-                'abstract',
-                'full',
-                'text',
-                '</s>',
+                "test",
+                "two",
+                "title",
+                "authors",
+                "publication",
+                "abstract",
+                "excerpt",
+                "description",
+                "</s>",
             ],
         ),
         (
@@ -145,30 +151,32 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 },
                 {
                     "item_title": "test title two",
                     "authors": "test authors two",
                     "publication_name": "test publication two",
                     "abstract_description": "test abstract two",
-                    "full_text": "test full text two",
                     "module_id_for_all": "test_module",
+                    "excerpts_ts": "test excerpt two",
+                    "yt_description": "test yt description two",
                 },
             ],
             True,
             ["__label__TEST_MODULE"],
             [
-                'test',
-                'two',
-                'title',
-                'authors',
-                'publication',
-                'abstract',
-                'full',
-                'text',
-                '</s>',
+                "test",
+                "two",
+                "title",
+                "authors",
+                "publication",
+                "abstract",
+                "excerpt",
+                "description",
+                "</s>",
             ],
         ),
         (
@@ -178,47 +186,43 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                     "authors": "test authors",
                     "publication_name": "test publication",
                     "abstract_description": "test abstract",
-                    "full_text": "test full text",
                     "module_id_for_all": "test_module_1",
+                    "excerpts_ts": "test excerpt",
+                    "yt_description": "test yt description",
                 },
                 {
                     "item_title": "test title two",
                     "authors": "test authors two",
                     "publication_name": "test publication two",
                     "abstract_description": "test abstract two",
-                    "full_text": "test full text two",
                     "module_id_for_all": "test_module_2",
+                    "excerpts_ts": "test excerpt two",
+                    "yt_description": "test yt description two",
                 },
             ],
             False,
             ["__label__TEST_MODULE_1", "__label__TEST_MODULE_2"],
             [
-                'test',
-                'two',
-                'title',
-                'authors',
-                'publication',
-                'abstract',
-                'full',
-                'text',
-                '</s>',
+                "test",
+                "two",
+                "title",
+                "authors",
+                "publication",
+                "abstract",
+                "excerpt",
+                "description",
+                "</s>",
             ],
         ),
     ],
 )
 def test_train_model(caplog, input, quantize, expected_labels, expected_words):
-    trainer = Trainer(
-        cpus=1, training_parameters={**TRAINING_PARAMS, "epoch": 1}
-    )
+    trainer = Trainer(cpus=1, training_parameters={**TRAINING_PARAMS, "epoch": 1})
 
     with NamedTemporaryFile("w") as csvfile, NamedTemporaryFile(
         delete=False
-    ) as target_file, caplog.at_level(
-        logging.INFO, logger=trainer.__class__.__name__
-    ):
-        writer = DictWriter(
-            csvfile, {column for row in input for column in row.keys()}
-        )
+    ) as target_file, caplog.at_level(logging.INFO, logger=trainer.__class__.__name__):
+        writer = DictWriter(csvfile, {column for row in input for column in row.keys()})
         writer.writeheader()
         writer.writerows(input)
         csvfile.flush()
@@ -231,8 +235,8 @@ def test_train_model(caplog, input, quantize, expected_labels, expected_words):
             assert "Compressing model..." in caplog.messages
     model: FastText = FastText.load_model(out)
     assert model.is_quantized() == quantize
-    assert model.labels == expected_labels
-    assert model.words == expected_words
+    assert sorted(model.labels) == sorted(expected_labels)
+    assert sorted(model.words) == sorted(expected_words)
     os.remove(out)
 
 
