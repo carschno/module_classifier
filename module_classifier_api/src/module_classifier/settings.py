@@ -9,8 +9,8 @@ TEXT_FIELDS: Iterable[str] = (
     "authors",
     "publication_name",
     "abstract_description",
-    # "excerpts_ts",
-    "full_text",
+    "excerpts_ts",
+    "yt_description"
 )
 
 CLASS_FIELD: str = "module_id_for_all"
