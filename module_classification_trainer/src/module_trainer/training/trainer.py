@@ -80,6 +80,7 @@ class Trainer:
         input_file: str,
         model_file: str,
         module_delimiter: Optional[str] = None,
+        test_label: bool = False,
         **kwargs,
     ):
         with NamedTemporaryFile("wt") as temp_file:
@@ -92,8 +93,13 @@ class Trainer:
             )
 
             self.logger.info("Loading model from '%s'", model_file)
-            model = FastText.load_model(model_file)
-            return model.test(temp_file.name, **kwargs)
+            model: FastText._FastText = FastText.load_model(model_file)
+
+            return (
+                model.test_label(temp_file.name, **kwargs)
+                if test_label
+                else model.test(temp_file.name, **kwargs)
+            )
 
     def _write_training_file(
         self,
