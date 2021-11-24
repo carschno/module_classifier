@@ -27,7 +27,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [(Module(S=3, module=6), 1.0000100135803223)],
+            [(Module(section=3, module=6), 1.0000100135803223)],
         ),
         (
             {
@@ -43,7 +43,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [(Module(S=3, module=3), 0.4488534927368164)],
+            [(Module(section=3, module=3), 0.4488534927368164)],
         ),
         (
             {
@@ -60,8 +60,8 @@ def test_init():
             ),
             2,
             [
-                (Module(S=3, module=3), 0.4488534927368164),
-                (Module(S=6, module=7), 0.4234696626663208),
+                (Module(section=3, module=3), 0.4488534927368164),
+                (Module(section=6, module=7), 0.4234696626663208),
             ],
         ),
     ],
@@ -80,9 +80,9 @@ def test_predict_row(row, columns, k, expected):
             "ai automation",
             3,
             [
-                (Module(S=6, module=8), 1.0000100135803223),
-                (Module(S=4, module=5), 1.0000003385357559e-05),
-                (Module(S=4, module=2), 1.0000003385357559e-05),
+                (Module(section=6, module=8), 1.0000100135803223),
+                (Module(section=4, module=5), 1.0000003385357559e-05),
+                (Module(section=4, module=2), 1.0000003385357559e-05),
             ],
         )
     ],
