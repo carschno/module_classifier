@@ -36,7 +36,7 @@ def does_not_raise():
                 }
             ],
             [
-                "__label__S1.M1 test title test authors test publication test abstract test excerpt test description"
+                "__label__S1_M1 test title test authors test publication test abstract test excerpt test description"
             ],
         ),
         (
@@ -61,8 +61,8 @@ def does_not_raise():
                 },
             ],
             [
-                "__label__S1.M1 test title test authors test publication test abstract test excerpt test description",
-                "__label__S1.M1 test title two test authors two test publication two test abstract two test excerpt two test description two",
+                "__label__S1_M1 test title test authors test publication test abstract test excerpt test description",
+                "__label__S1_M1 test title two test authors two test publication two test abstract two test excerpt two test description two",
             ],
         ),
         (
@@ -79,7 +79,7 @@ def does_not_raise():
             ]
             * 20,
             [
-                "__label__S1.M1 test title test authors test publication test abstract test excerpt test description"
+                "__label__S1_M1 test title test authors test publication test abstract test excerpt test description"
             ]
             * 20,
         ),
@@ -131,7 +131,7 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                 },
             ],
             False,
-            ["__label__S1.M1"],
+            ["__label__S1_M1"],
             [
                 "test",
                 "two",
@@ -166,7 +166,7 @@ def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
                 },
             ],
             True,
-            ["__label__S1.M1"],
+            ["__label__S1_M1"],
             [
                 "test",
                 "two",
