@@ -52,4 +52,4 @@ def fasttext_line(
         else ""
     )
 
-    return module + " ".join([clean(row[key]) for key in text_fields])
+    return " ".join([module] + [clean(row[key]) for key in text_fields]).strip()

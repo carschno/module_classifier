@@ -69,7 +69,7 @@ def test_clean(text, expected):
                 "publication_name",
                 "abstract_description",
             ),
-            "   ",
+            "",
             does_not_raise(),
         ),
         (
