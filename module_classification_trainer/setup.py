@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="module-trainer",
-    version="0.0.5",
+    version="0.1.0",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
     description="Train a module classification model for The Syllabus.",
@@ -20,6 +20,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.8',
-    install_requires=["fasttext==0.9.2", "module-classifier-api==0.0.5"],
+    install_requires=["fasttext==0.9.2", "module-classifier-api>=0.1.0,<0.2.0"],
     extras_require={"testing": ["pytest==6.1.0", "pytest-mock==3.3.1"]},
 )
