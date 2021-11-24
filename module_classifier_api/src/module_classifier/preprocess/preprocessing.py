@@ -1,9 +1,10 @@
 import os
-from typing import Dict, Iterable, Literal
+from typing import Dict, Iterable, Literal, Optional
 
 from ..models import Module
 from ..settings import (
     CLASS_FIELD,
+    DEFAULT_MODULE_DELIMITER,
     MIN_TOKEN_LENGTH,
     PUNCTUATION_CHARACTERS,
     TEXT_FIELDS,
@@ -11,6 +12,9 @@ from ..settings import (
 
 LABEL_PREFIX: Literal["__label__"] = "__label__"
 MODULE_DELIMITERS: Iterable[str] = ("_", ".")
+assert (
+    DEFAULT_MODULE_DELIMITER in MODULE_DELIMITERS
+), f"Module delimiters must contain default delimiter ('{DEFAULT_MODULE_DELIMITER}')."
 
 
 def clean(s: str) -> str:
@@ -35,6 +39,8 @@ def fasttext_line(
     row: Dict[str, str],
     text_fields: Iterable[str] = TEXT_FIELDS,
     class_field: str = CLASS_FIELD,
+    *,
+    module_delimiter: Optional[str] = None,
 ) -> str:
     if text_fields:
         # validate that specified text fields are present
@@ -47,7 +53,10 @@ def fasttext_line(
     module: str = (
         Module.from_string(
             row.get(class_field, ""), delimiters=MODULE_DELIMITERS
-        ).fasttext(label_prefix=LABEL_PREFIX)
+        ).fasttext(
+            label_prefix=LABEL_PREFIX,
+            delimiter=module_delimiter or DEFAULT_MODULE_DELIMITER,
+        )
         if class_field in row
         else ""
     )

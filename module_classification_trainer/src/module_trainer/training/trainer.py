@@ -75,9 +75,21 @@ class Trainer:
             else:
                 self._train_model(temp_file.name, target_file)
 
-    def evaluate_model(self, input_file: str, model_file: str, **kwargs):
+    def evaluate_model(
+        self,
+        input_file: str,
+        model_file: str,
+        module_delimiter: Optional[str] = None,
+        **kwargs,
+    ):
         with NamedTemporaryFile("wt") as temp_file:
-            self._write_training_file(input_file, temp_file, TEXT_FIELDS, CLASS_FIELD)
+            self._write_training_file(
+                input_file,
+                temp_file,
+                TEXT_FIELDS,
+                CLASS_FIELD,
+                module_delimiter=module_delimiter,
+            )
 
             self.logger.info("Loading model from '%s'", model_file)
             model = FastText.load_model(model_file)
@@ -89,12 +101,15 @@ class Trainer:
         target_file: IO[str],
         text_fields: Iterable[str],
         class_field: str,
+        module_delimiter: Optional[str] = None,
     ):
         self.__logger.info(f"Reading input file '{input_file}'...")
         with open(input_file, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
             lines: Iterable[str] = (
-                fasttext_line(row, text_fields, class_field)
+                fasttext_line(
+                    row, text_fields, class_field, module_delimiter=module_delimiter
+                )
                 for row in reader
                 if row.get(class_field)
             )
