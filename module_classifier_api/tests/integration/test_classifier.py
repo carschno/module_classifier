@@ -1,6 +1,7 @@
 import pytest
-
 from src.module_classifier.classification.classifier import Classifier
+from src.module_classifier.models import Module
+
 from ..conftest import TEST_MODEL, does_not_raise
 
 
@@ -26,7 +27,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [("S4.M10", 0.9931851029396057)],
+            [(Module(S=3, module=6), 1.0000100135803223)],
         ),
         (
             {
@@ -42,7 +43,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [("S6.M1", 0.5474758148193359)],
+            [(Module(S=3, module=3), 0.4488534927368164)],
         ),
         (
             {
@@ -58,7 +59,10 @@ def test_init():
                 "abstract_description",
             ),
             2,
-            [("S6.M1", 0.5474758148193359), ("S6.M5", 0.3911016881465912)],
+            [
+                (Module(S=3, module=3), 0.4488534927368164),
+                (Module(S=6, module=7), 0.4234696626663208),
+            ],
         ),
     ],
     ids=["empty fields", "test fields", "k=2"],
@@ -76,9 +80,9 @@ def test_predict_row(row, columns, k, expected):
             "ai automation",
             3,
             [
-                ("S6.M8", 1.0000100135803223),
-                ("S6.M6", 1.0011730410042219e-05),
-                ("S6.M3", 1.0000422662415076e-05),
+                (Module(S=6, module=8), 1.0000100135803223),
+                (Module(S=4, module=5), 1.0000003385357559e-05),
+                (Module(S=4, module=2), 1.0000003385357559e-05),
             ],
         )
     ],

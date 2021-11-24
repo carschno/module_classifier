@@ -69,7 +69,7 @@ def test_clean(text, expected):
                 "publication_name",
                 "abstract_description",
             ),
-            "__label__    ",
+            "   ",
             does_not_raise(),
         ),
         (
@@ -85,7 +85,7 @@ def test_clean(text, expected):
                 "publication_name",
                 "abstract_description",
             ),
-            "__label__ test title test author test publication test abstract",
+            "test title test author test publication test abstract",
             does_not_raise(),
         ),
     ],

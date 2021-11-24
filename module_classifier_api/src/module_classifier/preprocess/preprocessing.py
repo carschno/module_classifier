@@ -1,6 +1,7 @@
 import os
 from typing import Dict, Iterable, Literal
 
+from ..models import Module
 from ..settings import (
     CLASS_FIELD,
     MIN_TOKEN_LENGTH,
@@ -9,6 +10,7 @@ from ..settings import (
 )
 
 LABEL_PREFIX: Literal["__label__"] = "__label__"
+MODULE_DELIMITERS: Iterable[str] = ("_", ".")
 
 
 def clean(s: str) -> str:
@@ -32,7 +34,7 @@ def clean(s: str) -> str:
 def fasttext_line(
     row: Dict[str, str],
     text_fields: Iterable[str] = TEXT_FIELDS,
-    class_field: str = CLASS_FIELD
+    class_field: str = CLASS_FIELD,
 ) -> str:
     if text_fields:
         # validate that specified text fields are present
@@ -42,7 +44,12 @@ def fasttext_line(
     else:
         text_fields = row.keys()
 
-    return " ".join(
-        [f"{LABEL_PREFIX}{row.get(class_field, '').upper()}"]
-        + [clean(row[key]) for key in text_fields]
+    module: str = (
+        Module.from_string(
+            row.get(class_field, ""), delimiters=MODULE_DELIMITERS
+        ).fasttext(label_prefix=LABEL_PREFIX)
+        if class_field in row
+        else ""
     )
+
+    return module + " ".join([clean(row[key]) for key in text_fields])

@@ -4,8 +4,9 @@ from typing import Dict, Iterable, List, Tuple
 
 import fasttext
 
+from ..models import Module
 from ..preprocess import clean, fasttext_line
-from ..preprocess.preprocessing import LABEL_PREFIX
+from ..preprocess.preprocessing import LABEL_PREFIX, MODULE_DELIMITERS
 from ..settings import DEFAULT_MODEL
 
 
@@ -18,7 +19,7 @@ class Classifier:
         row: Dict[str, str],
         k: int = 1,
         columns: Iterable[str] = (),
-    ) -> List[Tuple[str, float]]:
+    ) -> List[Tuple[Module, float]]:
         """
         Predict label for a CSV row.
 
@@ -35,7 +36,7 @@ class Classifier:
         """
         return self.predict_text(fasttext_line(row, columns), k)
 
-    def predict_text(self, text: str, k: int = 1) -> List[Tuple[str, float]]:
+    def predict_text(self, text: str, k: int = 1) -> List[Tuple[Module, float]]:
         """
         Predict label for any text
         Args:
@@ -54,8 +55,15 @@ class Classifier:
 
     @staticmethod
     def _post_process(predictions: Iterable[Tuple[str, float]]):
+
         return [
-            (label[len(LABEL_PREFIX) :], prob) for label, prob in predictions
+            (
+                Module.from_string(
+                    label, label_prefix=LABEL_PREFIX, delimiters=MODULE_DELIMITERS
+                ),
+                prob,
+            )
+            for label, prob in predictions
         ]
 
     @classmethod
