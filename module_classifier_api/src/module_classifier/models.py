@@ -3,7 +3,7 @@ from typing import Iterable, Match, Optional, Pattern
 
 from pydantic import BaseModel, PositiveInt
 
-DEFAULT_MODULE_DELIMITER = "."
+from .settings import DEFAULT_MODULE_DELIMITER
 
 
 class Module(BaseModel):

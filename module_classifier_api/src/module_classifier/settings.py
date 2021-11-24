@@ -10,7 +10,7 @@ TEXT_FIELDS: Iterable[str] = (
     "publication_name",
     "abstract_description",
     "excerpts_ts",
-    "yt_description"
+    "yt_description",
 )
 
 CLASS_FIELD: str = "module_id_for_all"
@@ -18,3 +18,5 @@ MIN_TOKEN_LENGTH: int = 3
 PUNCTUATION_CHARACTERS: str = string.punctuation + "–‒—‘’”“"
 
 DEFAULT_MODEL: str = str(CWD / "data" / "classifier.model.ftz")
+
+DEFAULT_MODULE_DELIMITER: str = "_"
