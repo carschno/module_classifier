@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="module-classifier-api",
-    version="0.0.5",
+    version="0.1.0",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
     description="API for The Syllabus modules classifier.",
@@ -20,8 +20,8 @@ setuptools.setup(
     ],
     package_data={"module_classifier": ["data/classifier.model.ftz"]},
     include_package_data=True,
-    python_requires='>=3.8',
+    python_requires=">=3.8",
     # conda install -c conda-forge fasttext
-    install_requires=["fasttext==0.9.2"],
+    install_requires=["fasttext==0.9.2", "pydantic>=1.8.0<1.9.0"],
     extras_require={"testing": ["pytest==6.1.0", "pytest-mock==3.3.1"]},
 )
