@@ -77,37 +77,32 @@ if __name__ == "__main__":
 
     trainer: Trainer = Trainer()
 
+    evaluation_args = {
+        "input_file": args.input.name,
+        "model_file": args.model_file.name,
+        "k": args.k,
+        "threshold": args.threshold,
+        "module_delimiter": args.delimiter,
+    }
+
     if args.labels:
         print(
             f"Running per label analysis for model '{args.model_file.name}' on data '{args.input.name}'."
         )
-        result = trainer.evaluate_model(
-            args.input.name,
-            args.model_file.name,
-            k=args.k,
-            threshold=args.threshold,
-            module_delimiter=args.delimiter,
-            test_label=args.labels,
-        )
+        result = trainer.evaluate_model(**evaluation_args, test_label=True)
 
         writer = csv.DictWriter(
             args.output, fieldnames=["label", "precision", "recall", "f1score"]
         )
         writer.writeheader()
         for label, stats in result.items():
-            writer.writerow(LabelOutput(label=label, stats=Stats(stats)).to_row())
+            writer.writerow(LabelOutput(label=label, stats=Stats(**stats)).to_row())
 
     print(
         f"Running evaluation for model '{args.model_file.name}' on data '{args.input.name}'."
     )
-    n, precision, recall = trainer.evaluate_model(
-        args.input.name,
-        args.model_file.name,
-        k=args.k,
-        threshold=args.threshold,
-        module_delimiter=args.delimiter,
-        test_label=False,
-    )
+    n, precision, recall = trainer.evaluate_model(**evaluation_args)
+
     print(f"Number of samples:\t{n}")
     print(f"Precision:\t{precision}")
     print(f"Recall:\t{recall}")
