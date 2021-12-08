@@ -108,22 +108,28 @@ class Trainer:
         text_fields: Iterable[str],
         class_field: str,
         module_delimiter: Optional[str] = None,
+        module_fields: Optional[Iterable[str]] = None,
     ):
         self.__logger.info(f"Reading input file '{input_file}'...")
+        self.__logger.info(
+            f"Writing temporary FastText file to '{target_file.name}'..."
+        )
         with open(input_file, newline="") as csvfile:
             reader = csv.DictReader(csvfile)
-            lines: Iterable[str] = (
-                fasttext_line(
-                    row, text_fields, class_field, module_delimiter=module_delimiter
-                )
-                for row in reader
-                if row.get(class_field)
-            )
-            self.__logger.info(
-                f"Writing temporary FastText file to '{target_file.name}'..."
-            )
-            for line in lines:
-                target_file.write(line + os.linesep)
+
+            for row in reader:
+                if class_field in row:
+                    target_file.write(
+                        fasttext_line(
+                            row,
+                            text_fields,
+                            class_field,
+                            module_delimiter=module_delimiter,
+                            module_fields=module_fields,
+                        )
+                    )
+                    target_file.write(os.linesep)
+
         target_file.flush()
 
     def _train_model(self, training_file: str, target_file: Optional[str]) -> FastText:

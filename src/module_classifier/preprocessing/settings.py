@@ -23,3 +23,8 @@ DEFAULT_MODULE_DELIMITER: str = "_"
 
 LABEL_PREFIX: Literal["__label__"] = "__label__"
 MODULE_DELIMITERS: Iterable[str] = ("_", ".")
+
+
+assert (
+    DEFAULT_MODULE_DELIMITER in MODULE_DELIMITERS
+), f"Module delimiters must contain default delimiter ('{DEFAULT_MODULE_DELIMITER}')."

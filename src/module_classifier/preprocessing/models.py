@@ -3,7 +3,7 @@ from typing import Iterable, Match, Optional, Pattern
 
 from pydantic import BaseModel, PositiveInt
 
-from .settings import DEFAULT_MODULE_DELIMITER
+from .settings import DEFAULT_MODULE_DELIMITER, MODULE_DELIMITERS
 
 
 class Module(BaseModel):
@@ -39,7 +39,13 @@ class Module(BaseModel):
         return Module.__annotations__.keys()
 
     @classmethod
-    def from_string(cls, s: str, *, label_prefix: str = "", delimiters: Iterable[str]):
+    def from_string(
+        cls,
+        s: str,
+        *,
+        label_prefix: str = "",
+        delimiters: Iterable[str] = MODULE_DELIMITERS,
+    ):
         """Parse a string representation of a module, optionally with a prefix (e.g. '__label__')."""
 
         delimiters_pattern: str = "|".join(delimiters)

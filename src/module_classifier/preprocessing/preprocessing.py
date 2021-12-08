@@ -12,10 +12,6 @@ from .settings import (
     TEXT_FIELDS,
 )
 
-assert (
-    DEFAULT_MODULE_DELIMITER in MODULE_DELIMITERS
-), f"Module delimiters must contain default delimiter ('{DEFAULT_MODULE_DELIMITER}')."
-
 
 def clean(s: str) -> str:
     for c in PUNCTUATION_CHARACTERS:
@@ -41,6 +37,7 @@ def fasttext_line(
     class_field: str = CLASS_FIELD,
     *,
     module_delimiter: Optional[str] = None,
+    module_fields: Optional[Iterable[str]] = None,
 ) -> str:
     if text_fields:
         # validate that specified text fields are present
@@ -55,6 +52,7 @@ def fasttext_line(
             row.get(class_field, ""), delimiters=MODULE_DELIMITERS
         ).fasttext(
             label_prefix=LABEL_PREFIX,
+            fields=module_fields,
             delimiter=module_delimiter or DEFAULT_MODULE_DELIMITER,
         )
         if class_field in row
