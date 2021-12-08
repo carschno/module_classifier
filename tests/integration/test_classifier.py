@@ -1,5 +1,5 @@
 import pytest
-from src.module_classifier.classification import Classifier
+from src.module_classifier.classification import Classifier, Prediction
 from src.module_classifier.preprocessing import Module
 
 from ..conftest import TEST_MODEL, does_not_raise
@@ -27,7 +27,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [(Module(section=3, module=6), 1.0000100135803223)],
+            [Prediction(Module(section=3, module=6), 1.0000100135803223)],
         ),
         (
             {
@@ -43,7 +43,7 @@ def test_init():
                 "abstract_description",
             ),
             1,
-            [(Module(section=3, module=3), 0.4488534927368164)],
+            [Prediction(Module(section=3, module=3), 0.4488534927368164)],
         ),
         (
             {
@@ -60,8 +60,8 @@ def test_init():
             ),
             2,
             [
-                (Module(section=3, module=3), 0.4488534927368164),
-                (Module(section=6, module=7), 0.4234696626663208),
+                Prediction(Module(section=3, module=3), 0.4488534927368164),
+                Prediction(Module(section=6, module=7), 0.4234696626663208),
             ],
         ),
     ],
@@ -80,9 +80,9 @@ def test_predict_row(row, columns, k, expected):
             "ai automation",
             3,
             [
-                (Module(section=6, module=8), 1.0000100135803223),
-                (Module(section=4, module=5), 1.0000003385357559e-05),
-                (Module(section=4, module=2), 1.0000003385357559e-05),
+                Prediction(Module(section=6, module=8), 1.0000100135803223),
+                Prediction(Module(section=4, module=5), 1.0000003385357559e-05),
+                Prediction(Module(section=4, module=2), 1.0000003385357559e-05),
             ],
         )
     ],
@@ -106,3 +106,13 @@ def test_predict_text(text, k, expected):
 def test_download(remote, local, expected_exception):
     with expected_exception:
         assert isinstance(Classifier.download(remote, local), Classifier)
+
+
+def test_labels():
+    assert len(Classifier(TEST_MODEL).labels) == 60
+
+
+def test_modules():
+    model = Classifier(TEST_MODEL)
+    assert len(model.modules) == 60
+    assert all(isinstance(m, Module) for m in model.modules)
