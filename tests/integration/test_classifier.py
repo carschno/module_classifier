@@ -6,6 +6,23 @@ from src.module_classifier.preprocessing import Module
 from ..conftest import TEST_MODEL, does_not_raise
 
 
+class TestPredictions:
+    @pytest.mark.parametrize(
+        "predictions, labels, expected",
+        [
+            (Predictions([], []), [], []),
+            (Predictions(["l1"], np.array([0.1])), ["l1"], [0.1]),
+            (
+                Predictions(["l1", "l2", "l3"], np.array([0.1, 0.2, 0.3])),
+                ["l2", "l3", "l1"],
+                [0.2, 0.3, 0.1],
+            ),
+        ],
+    )
+    def test_get_probabilities(self, predictions, labels, expected):
+        assert predictions.get_probabilities(labels).tolist() == expected
+
+
 @pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 class TestClassifier:
     classifier = Classifier(TEST_MODEL)
@@ -121,18 +138,21 @@ class TestClassifier:
     @pytest.mark.parametrize(
         "texts,k,expected",
         [
-            ([], 3, []),
             (
                 ["text about china", "ai automation"],
                 3,
                 [
                     Predictions(
                         labels=["__label__S5_M8", "__label__S6_M9", "__label__S6_M8"],
-                        probs=np.array([9.9993765e-01, 7.7751087e-05, 1.4639512e-05]),
+                        probs=pytest.approx(
+                            [9.9993765e-01, 7.7751087e-05, 1.4639512e-05]
+                        ),
                     ),
                     Predictions(
                         labels=["__label__S6_M8", "__label__S4_M5", "__label__S4_M2"],
-                        probs=np.array([1.0000100e00, 1.0000003e-05, 1.0000003e-05]),
+                        probs=pytest.approx(
+                            [1.0000100e00, 1.0000003e-05, 1.0000003e-05]
+                        ),
                     ),
                 ],
             ),
@@ -141,7 +161,34 @@ class TestClassifier:
     def test_predict_texts(self, texts, k, expected):
         for prediction, e in zip(self.classifier.predict_texts(texts, k), expected):
             assert prediction.labels == e.labels
-            assert np.allclose(prediction.probs, e.probs)
+            assert prediction.probs.tolist() == e.probs
+
+    @pytest.mark.parametrize(
+        "texts, k, expected_top_labels",
+        [
+            ([""], 1, ["__label__S3_M6"]),
+            (["ai and automation"], 1, ["__label__S6_M8"]),
+            (["ai and automation"], 3, ["__label__S6_M8"]),
+            (
+                ["ai and automation", "a text about china"],
+                3,
+                ["__label__S6_M8", "__label__S5_M8"],
+            ),
+            (
+                ["ai and automation", "a text about china"],
+                1,
+                ["__label__S6_M8", "__label__S5_M8"],
+            ),
+        ],
+    )
+    def test_prediction_probs(self, texts, k, expected_top_labels):
+        probs: np.ndarray = self.classifier.prediction_probs(texts, k)
+        assert probs.shape == (len(texts), len(self.classifier.raw_labels))
+        assert len(probs[probs > 0.0]) == k * len(texts)
+
+        assert probs.argmax(axis=1).tolist() == [
+            self.classifier.raw_labels.index(label) for label in expected_top_labels
+        ]
 
     @pytest.mark.parametrize(
         "remote,local,expected_exception",
