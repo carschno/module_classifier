@@ -1,5 +1,6 @@
 import logging
 import os
+import urllib.request
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Tuple
 
@@ -136,6 +137,7 @@ class Classifier:
                 f"Local file '{local_path}' already exists, skipping download."
             )
         else:
-            # TODO: download remote model
-            raise NotImplementedError()
+            logging.info(f"Downloading model from '{url}' to '{local_path}'.")
+            with open(local_path, "wb") as f, urllib.request.urlopen(url) as response:
+                f.write(response.read())
         return cls(local_path)
