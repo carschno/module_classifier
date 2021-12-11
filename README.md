@@ -31,6 +31,50 @@ The `predict_row()` method expects a row from a CSV file in the form of a
 dictionary as input.
 It extracts the text fields and returns the same output format.
 
+## Explanation
+
+### Command Line Tool
+
+The built-in script `explain` generates a simplified visualization of the words that contributed to the classifier's decision.
+Run it from the command line for instance like this:
+
+```
+explain -i <input.txt> -o <output.html> -k 3
+```
+
+The <input.txt> file is a file containing a single text to be explained.
+The <output.html> file is the output file to which the output is written in HTML format.
+The `-k` parameter determines the number of labels to be explained (defaults to 1, ie. explain only the highest scoring label).
+
+Optionally, you can specify a custom model file with the `--model-file` parameter:
+
+```
+explain -i <input.txt> -o <output.html> --model-file <my_model_file>
+```
+
+Run `explain --help` for a full list of parameters.
+
+### Python Interface
+
+The module `module_classifier.explaination.explainer.Explainer` provides a Python class for explainations.
+It is initialized with a `Classifier` object:
+
+```
+from module_classifier.classification import Classifier
+from module_classifier.explain import Explainer
+
+classifier = Classifier()
+explainer = Explainer(classifier)
+
+explainer.explain("text to explain", k=3)
+```
+
+The `explain()` method returns an `Explanation` object.
+See the [Lime documentation](https://lime-ml.readthedocs.io/en/latest/lime.html#lime.explanation.Explanation) for available methods.
+
+
+
+
 ## Train a New Model
 
 ### Command Line Tool

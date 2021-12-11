@@ -1,6 +1,5 @@
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, List
 
-import numpy as np
 from lime.explanation import Explanation
 from lime.lime_text import LimeTextExplainer
 
@@ -17,7 +16,7 @@ class Explainer:
             class_names=classifier.raw_labels,
         )
 
-    def explain(self, input: str, k: int = 1, **kwargs) -> Explanation:
+    def explain(self, input: str, k: int, **kwargs) -> Explanation:
         return self._explainer.explain_instance(
             clean(input),
             classifier_fn=lambda x: self._classifier.prediction_probs(x, k=k),

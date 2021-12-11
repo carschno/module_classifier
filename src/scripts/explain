@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+import argparse
+from typing import List, Tuple
+
+from module_classifier.classification import Classifier
+from module_classifier.classification.settings import DEFAULT_MODEL
+from module_classifier.explanation import Explainer
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Explain a prediction.")
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=argparse.FileType("r"),
+        required=True,
+        help="Input file",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=argparse.FileType("w"),
+        required=True,
+        help="Output file",
+    )
+    parser.add_argument(
+        "--model-file",
+        "-m",
+        type=argparse.FileType("r"),
+        default=open(DEFAULT_MODEL, "r"),
+        help="Model file",
+    )
+    parser.add_argument(
+        "-k", type=int, default=1, help="Explain the top k predictions (defaults to 1)."
+    )
+    parser.add_argument(
+        "--format", "-f", choices=["html", "list"], default="html", type=str
+    )
+    parser.add_argument(
+        "--num-features",
+        type=int,
+        default=10,
+        help="Number of words (features) to show.",
+    )
+    parser.add_argument(
+        "--num-samples",
+        type=int,
+        default=5000,
+        help="Number of samples to use for generating explanations. Defaults to 5000; a lower number make the explanation faster, but less accurate.",
+    )
+
+    args = parser.parse_args()
+
+    text: str = args.input.read()
+
+    classifier = Classifier(args.model_file.name)
+    explainer = Explainer(classifier)
+
+    explanation = explainer.explain(
+        text, k=args.k, num_samples=args.num_samples, num_features=args.num_features
+    )
+
+    if args.format == "html":
+        args.output.write(explanation.as_html())
+    elif args.format == "list":
+        words: List[Tuple[str, float]] = explanation.as_list(explanation.top_labels[0])
+        for word, score in words:
+            args.output.write(f"{word}\t{score}\n")
+    else:
+        raise ValueError("Unknown format")
