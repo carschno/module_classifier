@@ -2,7 +2,9 @@ import logging
 import os
 import urllib.request
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Tuple
+from hashlib import md5
+from posixpath import splitext
+from typing import Dict, Iterable, List
 
 import fasttext
 import numpy as np
@@ -140,4 +142,21 @@ class Classifier:
             logging.info(f"Downloading model from '{url}' to '{local_path}'.")
             with open(local_path, "wb") as f, urllib.request.urlopen(url) as response:
                 f.write(response.read())
+
+        expected_hash: str = splitext(local_path)[1][1:]
+        if len(expected_hash) == 32:
+            if Classifier.get_hash(local_path) != expected_hash:
+                raise ValueError(
+                    f"Expected hash '{expected_hash}' does not match dowloaded model file."
+                )
+        else:
+            logging.warning(
+                f"Model file name should end with MD5 sum; invalid hash: '{expected_hash}'"
+            )
         return cls(local_path)
+
+    @staticmethod
+    def get_hash(filename: str) -> str:
+        with open(filename, "rb") as f:
+            new_hash: str = md5(f.read()).hexdigest()
+        return new_hash
