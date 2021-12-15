@@ -6,6 +6,7 @@ from hashlib import md5
 from posixpath import splitext
 from typing import Dict, Iterable, List
 
+import boto3
 import fasttext
 import numpy as np
 
@@ -153,6 +154,21 @@ class Classifier:
             logging.warning(
                 f"Model file name should end with MD5 sum; invalid hash: '{expected_hash}'"
             )
+        return cls(local_path)
+
+    @classmethod
+    def from_s3(cls, bucket: str, object_name: str, local_path: str = DEFAULT_MODEL):
+        if os.path.exists(local_path):
+            logging.info(
+                f"Local file '{local_path}' already exists, skipping download."
+            )
+        else:
+            logging.info(
+                f"Downloading model from 's3://{bucket}/{object_name}' to '{local_path}'."
+            )
+            s3 = boto3.client("s3")
+            s3.download_file(bucket, object_name, local_path)
+
         return cls(local_path)
 
     @staticmethod

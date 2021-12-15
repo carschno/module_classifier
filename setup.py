@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="module_classifier",
-    version="0.3.0",
+    version="0.3.1",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
     description="API for The Syllabus modules classifier.",
@@ -23,6 +23,11 @@ setuptools.setup(
     include_package_data=True,
     python_requires=">=3.8",
     # conda install -c conda-forge fasttext
-    install_requires=["fasttext==0.9.2", "pydantic>=1.8.0<1.9.0", "lime>=0.2.0,<0.3.0"],
+    install_requires=[
+        "fasttext==0.9.2",
+        "pydantic>=1.8.0<1.9.0",
+        "lime>=0.2.0,<0.3.0",
+        "boto3>=1.20.0,<1.21.0",
+    ],
     extras_require={"testing": ["pytest==6.1.0", "pytest-mock==3.3.1"]},
 )

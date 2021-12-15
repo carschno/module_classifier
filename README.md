@@ -5,12 +5,18 @@ This is a Python module for a module classifier for The Syllabus.
 ## Classification
 
 ### Usage
+
+
 To predict the module(s) for a text, use the `Classifier.predict_text()`
  method:
 ```
 from module_classifier.classification import Classifier
 
 classifier = Classifier() # use the default model
+
+# Or download the model from S3 and use it (uses local copy if already present):
+classifier = Classifier.from_s3("my_bucket", "my_object")
+
 # Alternatively, specify a custom model file:
 classifier = Classifier(model_path=model_file_path)
 
