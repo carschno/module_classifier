@@ -16,12 +16,13 @@ classifier = Classifier(model_path=model_file_path)
 
 classifier.predict_text("This text is about automation and AI", k=3)
 
-[(Module(S=6, module=8), 0.9990239143371582),
- (Module(S=6, module=2), 0.0004524348769336939),
- (Module(S=6, module=9), 0.0002751499123405665)]
+[Prediction(module=Module(section=6, module=8), prob=1.0000072),
+ Prediction(module=Module(section=6, module=2), prob=1.12474345e-05),
+ Prediction(module=Module(section=6, module=9), prob=1.099022e-05)]
 ```
 
-The method returns a list of tuples where each tuple comprises the module and the respective model 
+The method returns a list of `Prediction` objects of length `k`.
+Each of them compises comprises a `Module` object and the respective model 
 confidence.
  
 The function parameter `k` determines the number of results.
