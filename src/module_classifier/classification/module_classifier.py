@@ -11,7 +11,8 @@ import fasttext
 import numpy as np
 
 from ..preprocessing import Module, clean, fasttext_line
-from ..preprocessing.settings import LABEL_PREFIX, MODULE_DELIMITERS
+from ..preprocessing.settings import LABEL_PREFIX
+from .classifier import Classifier
 from .settings import MODULE_CLASSIFIER_DEFAULT_MODEL
 
 
@@ -55,17 +56,9 @@ class Predictions:
         return [Predictions(_labels, _probs) for _labels, _probs in zip(labels, probs)]
 
 
-class ModuleClassifier:
+class ModuleClassifier(Classifier):
     def __init__(self, model_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
         self.model = fasttext.load_model(path=model_path)
-
-    @property
-    def raw_labels(self) -> List[str]:
-        return self.model.get_labels()
-
-    @property
-    def labels(self) -> List[str]:
-        return [label[len(LABEL_PREFIX) :] for label in self.raw_labels]
 
     @property
     def modules(self) -> List[Module]:
@@ -108,13 +101,6 @@ class ModuleClassifier:
         if not texts:
             raise ValueError("No input text provided.")
         return self._predict([clean(text) for text in texts], k)
-
-    def prediction_probs(self, texts: List[str], k: int) -> np.ndarray:
-        predictions: List[Predictions] = self.predict_texts(texts, k)
-        all_probs: List[np.ndarray] = [
-            p.get_probabilities(self.raw_labels) for p in predictions
-        ]
-        return np.array(all_probs)
 
     def _predict(self, texts: List[str], k: int) -> List[Predictions]:
         """Predict labels and probabilities for a list of texts.
