@@ -3,13 +3,13 @@ from typing import Any, Dict, List
 from lime.explanation import Explanation
 from lime.lime_text import LimeTextExplainer
 
-from ..classification import Classifier
+from ..classification import ModuleClassifier
 from ..preprocessing import clean
 
 
 class Explainer:
-    def __init__(self, classifier: Classifier) -> None:
-        self._classifier: Classifier = classifier
+    def __init__(self, classifier: ModuleClassifier) -> None:
+        self._classifier: ModuleClassifier = classifier
         self._explainer: LimeTextExplainer = LimeTextExplainer(
             split_expression=lambda x: clean(x).split(),
             bow=False,

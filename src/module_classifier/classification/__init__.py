@@ -1,1 +1,1 @@
-from .classifier import Classifier, Prediction, Predictions
+from .module_classifier import ModuleClassifier, Prediction, Predictions

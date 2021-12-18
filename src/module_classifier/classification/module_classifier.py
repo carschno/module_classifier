@@ -12,7 +12,7 @@ import numpy as np
 
 from ..preprocessing import Module, clean, fasttext_line
 from ..preprocessing.settings import LABEL_PREFIX, MODULE_DELIMITERS
-from .settings import DEFAULT_MODEL
+from .settings import MODULE_CLASSIFIER_DEFAULT_MODEL
 
 
 @dataclass
@@ -55,8 +55,8 @@ class Predictions:
         return [Predictions(_labels, _probs) for _labels, _probs in zip(labels, probs)]
 
 
-class Classifier:
-    def __init__(self, model_path: str = DEFAULT_MODEL):
+class ModuleClassifier:
+    def __init__(self, model_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
         self.model = fasttext.load_model(path=model_path)
 
     @property
@@ -134,7 +134,7 @@ class Classifier:
         return Predictions.from_fasttext_predictions(labels, probs)
 
     @classmethod
-    def download(cls, url: str, local_path: str = DEFAULT_MODEL):
+    def download(cls, url: str, local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
         if os.path.exists(local_path):
             logging.info(
                 f"Local file '{local_path}' already exists, skipping download."
@@ -146,7 +146,7 @@ class Classifier:
 
         expected_hash: str = splitext(local_path)[1][1:]
         if len(expected_hash) == 32:
-            if Classifier.get_hash(local_path) != expected_hash:
+            if ModuleClassifier.get_hash(local_path) != expected_hash:
                 raise ValueError(
                     f"Expected hash '{expected_hash}' does not match dowloaded model file."
                 )
@@ -157,7 +157,12 @@ class Classifier:
         return cls(local_path)
 
     @classmethod
-    def from_s3(cls, bucket: str, object_name: str, local_path: str = DEFAULT_MODEL):
+    def from_s3(
+        cls,
+        bucket: str,
+        object_name: str,
+        local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
+    ):
         if os.path.exists(local_path):
             logging.info(
                 f"Local file '{local_path}' already exists, skipping download."
