@@ -4,14 +4,20 @@ import urllib.request
 from dataclasses import dataclass
 from hashlib import md5
 from posixpath import splitext
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List, Optional
 
 import boto3
 import fasttext
 import numpy as np
 
-from ..preprocessing import Module, clean, fasttext_line
-from ..preprocessing.settings import LABEL_PREFIX
+from ..preprocessing import Module, clean
+from ..preprocessing.settings import (
+    CLASS_FIELD,
+    DEFAULT_MODULE_DELIMITER,
+    LABEL_PREFIX,
+    MODULE_DELIMITERS,
+    TEXT_FIELDS,
+)
 from .classifier import Classifier
 from .settings import MODULE_CLASSIFIER_DEFAULT_MODEL
 
@@ -85,13 +91,7 @@ class ModuleClassifier(Classifier):
                 plus the model confidence for that label.
 
         """
-        return self._predict([fasttext_line(row, columns)], k)[0].to_predictions()
-
-    # TODO: return List[List[Prediction]]?
-    def predict_rows(
-        self, rows: List[Dict[str, str]], k: int = 1, columns: Iterable[str] = ()
-    ) -> List[Predictions]:
-        return self._predict([fasttext_line(row, columns) for row in rows], k)
+        return self._predict([self.fasttext_line(row, columns)], k)[0].to_predictions()
 
     def predict_text(self, text: str, k: int = 1) -> List[Prediction]:
         return self.predict_texts([text], k)[0].to_predictions()
@@ -118,6 +118,37 @@ class ModuleClassifier(Classifier):
         probs: List[np.ndarray]
         labels, probs = self.model.predict(texts, k)
         return Predictions.from_fasttext_predictions(labels, probs)
+
+    @staticmethod
+    def fasttext_line(
+        row: Dict[str, str],
+        text_fields: Iterable[str] = TEXT_FIELDS,
+        class_field: str = CLASS_FIELD,
+        *,
+        module_delimiter: Optional[str] = None,
+        module_fields: Optional[Iterable[str]] = None,
+    ) -> str:
+        if text_fields:
+            # validate that specified text fields are present
+            for field in text_fields:
+                if field not in row:
+                    raise ValueError(f"Missing input field: '{field}'.")
+        else:
+            text_fields = row.keys()
+
+        module: str = (
+            Module.from_string(
+                row.get(class_field, ""), delimiters=MODULE_DELIMITERS
+            ).fasttext(
+                label_prefix=LABEL_PREFIX,
+                fields=module_fields,
+                delimiter=module_delimiter or DEFAULT_MODULE_DELIMITER,
+            )
+            if class_field in row
+            else ""
+        )
+
+        return " ".join([module] + [clean(row[key]) for key in text_fields]).strip()
 
     @classmethod
     def download(cls, url: str, local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):

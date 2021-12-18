@@ -7,7 +7,7 @@ from typing import IO, Dict, Iterable, Optional
 import fasttext
 from fasttext import FastText
 
-from ..preprocessing import fasttext_line
+from ..classification import ModuleClassifier
 from ..preprocessing.settings import CLASS_FIELD, TEXT_FIELDS
 from .settings import QUANTIZE, TRAINING_PARAMS
 
@@ -120,7 +120,7 @@ class Trainer:
             for row in reader:
                 if class_field in row:
                     target_file.write(
-                        fasttext_line(
+                        ModuleClassifier.fasttext_line(
                             row,
                             text_fields,
                             class_field,

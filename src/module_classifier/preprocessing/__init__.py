@@ -1,2 +1,2 @@
-from .preprocessing import fasttext_line, clean
+from .preprocessing import clean
 from .models import Module

@@ -1,7 +1,6 @@
 import pytest
-from src.module_classifier.preprocessing import clean, fasttext_line
+from src.module_classifier.preprocessing import clean
 
-from ..conftest import does_not_raise
 
 
 @pytest.mark.parametrize(
@@ -30,67 +29,3 @@ from ..conftest import does_not_raise
 def test_clean(text, expected):
     assert clean(text) == expected
 
-
-@pytest.mark.parametrize(
-    "row,columns,expected,exception",
-    [
-        (
-            {},
-            (
-                "item_title",
-                "authors",
-                "publication_name",
-                "abstract_description",
-            ),
-            None,
-            pytest.raises(ValueError),
-        ),
-        (
-            {"title": ""},
-            (
-                "item_title",
-                "authors",
-                "publication_name",
-                "abstract_description",
-            ),
-            None,
-            pytest.raises(ValueError),
-        ),
-        (
-            {
-                "item_title": "",
-                "authors": "",
-                "publication_name": "",
-                "abstract_description": "",
-            },
-            (
-                "item_title",
-                "authors",
-                "publication_name",
-                "abstract_description",
-            ),
-            "",
-            does_not_raise(),
-        ),
-        (
-            {
-                "item_title": "test title",
-                "authors": "test author",
-                "publication_name": "test publication",
-                "abstract_description": "test abstract",
-            },
-            (
-                "item_title",
-                "authors",
-                "publication_name",
-                "abstract_description",
-            ),
-            "test title test author test publication test abstract",
-            does_not_raise(),
-        ),
-    ],
-    ids=["empty row", "missing fields", "empty fields", "all fields"],
-)
-def test_fasttext_line(row, columns, expected, exception):
-    with exception:
-        assert fasttext_line(row, columns) == expected

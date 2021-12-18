@@ -4,8 +4,8 @@ from typing import Dict, Generator, Iterable, Optional, Tuple
 
 import numpy as np
 
+from ..classification import ModuleClassifier
 from ..classification.settings import CLASS_FIELD, TEXT_FIELDS
-from ..preprocessing import fasttext_line
 
 
 class Preprocessor:
@@ -43,7 +43,7 @@ class Preprocessor:
 
     def generate_fasttext_lines(self) -> Generator[str, None, None]:
         return (
-            fasttext_line(row, TEXT_FIELDS)
+            ModuleClassifier.fasttext_line(row, TEXT_FIELDS)
             for row in self.read_csv()
             if row.get(CLASS_FIELD)
         )
