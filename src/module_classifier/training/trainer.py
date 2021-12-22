@@ -8,7 +8,7 @@ import fasttext
 from fasttext import FastText
 
 from ..classification import ModuleClassifier
-from ..preprocessing.settings import CLASS_FIELD, TEXT_FIELDS
+from ..preprocessing.settings import CLASS_FIELD, DEFAULT_MODULE_DELIMITER, TEXT_FIELDS
 from .settings import QUANTIZE, TRAINING_PARAMS
 
 
@@ -79,7 +79,7 @@ class Trainer:
         self,
         input_file: str,
         model_file: str,
-        module_delimiter: Optional[str] = None,
+        module_delimiter: str = DEFAULT_MODULE_DELIMITER,
         test_label: bool = False,
         **kwargs,
     ):
@@ -107,8 +107,7 @@ class Trainer:
         target_file: IO[str],
         text_fields: Iterable[str],
         class_field: str,
-        module_delimiter: Optional[str] = None,
-        module_fields: Optional[Iterable[str]] = None,
+        module_delimiter: str = DEFAULT_MODULE_DELIMITER,
     ):
         self.__logger.info(f"Reading input file '{input_file}'...")
         self.__logger.info(
@@ -125,7 +124,6 @@ class Trainer:
                             text_fields,
                             class_field,
                             module_delimiter=module_delimiter,
-                            module_fields=module_fields,
                         )
                     )
                     target_file.write(os.linesep)

@@ -12,8 +12,8 @@ class Module(BaseModel):
     section: PositiveInt
     module: PositiveInt
 
-    def __str__(self, delimiter=DEFAULT_MODULE_DELIMITER):
-        return self.__fields_to_str(Module.all_fields(), delimiter)
+    def __str__(self):
+        return self.to_string()
 
     def __field_to_str(self, field: str):
         if field not in self.__annotations__:
@@ -23,16 +23,9 @@ class Module(BaseModel):
     def __fields_to_str(self, fields: Iterable[str], delimiter: str):
         return delimiter.join((self.__field_to_str(field) for field in fields))
 
-    def fasttext(
-        self,
-        label_prefix: str,
-        fields: Optional[Iterable[str]] = None,
-        delimiter: str = DEFAULT_MODULE_DELIMITER,
-    ) -> str:
+    def to_string(self, delimiter: str = DEFAULT_MODULE_DELIMITER) -> str:
         """Generate a string representation suitable for a FastText line."""
-        return label_prefix + self.__fields_to_str(
-            fields or Module.all_fields(), delimiter
-        )
+        return self.__fields_to_str(Module.all_fields(), delimiter)
 
     @staticmethod
     def all_fields() -> Iterable[str]:

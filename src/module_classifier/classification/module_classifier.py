@@ -125,30 +125,16 @@ class ModuleClassifier(Classifier):
         text_fields: Iterable[str] = TEXT_FIELDS,
         class_field: str = CLASS_FIELD,
         *,
-        module_delimiter: Optional[str] = None,
-        module_fields: Optional[Iterable[str]] = None,
+        module_delimiter: str = DEFAULT_MODULE_DELIMITER,
     ) -> str:
-        if text_fields:
-            # validate that specified text fields are present
-            for field in text_fields:
-                if field not in row:
-                    raise ValueError(f"Missing input field: '{field}'.")
-        else:
-            text_fields = row.keys()
 
-        module: str = (
-            Module.from_string(
-                row.get(class_field, ""), delimiters=MODULE_DELIMITERS
-            ).fasttext(
-                label_prefix=LABEL_PREFIX,
-                fields=module_fields,
-                delimiter=module_delimiter or DEFAULT_MODULE_DELIMITER,
+        if class_field in row:
+            module: Module = Module.from_string(
+                row[class_field], delimiters=MODULE_DELIMITERS
             )
-            if class_field in row
-            else ""
-        )
+            row[class_field] = module.to_string(delimiter=module_delimiter)
 
-        return " ".join([module] + [clean(row[key]) for key in text_fields]).strip()
+        return Classifier.fasttext_line(row, text_fields, class_field)
 
     @classmethod
     def download(cls, url: str, local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):

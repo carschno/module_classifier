@@ -4,6 +4,7 @@ from typing import Any, Dict, Iterable, List
 import numpy as np
 from fasttext.FastText import _FastText
 
+from ..preprocessing import clean
 from ..preprocessing.settings import CLASS_FIELD, LABEL_PREFIX, TEXT_FIELDS
 
 
@@ -27,14 +28,22 @@ class Classifier(ABC):
         return NotImplemented
 
     @staticmethod
-    @abstractmethod
     def fasttext_line(
         row: Dict[str, str],
         text_fields: Iterable[str] = TEXT_FIELDS,
         class_field: str = CLASS_FIELD,
-        **kwargs
+        **kwargs,
     ) -> str:
-        return NotImplemented
+        if text_fields:
+            # validate that specified text fields are present
+            for field in text_fields:
+                if field not in row:
+                    raise ValueError(f"Missing input field: '{field}'.")
+        else:
+            text_fields = row.keys()
+
+        label: str = LABEL_PREFIX + row[class_field] if class_field in row else ""
+        return " ".join([label] + [clean(row[field]) for field in text_fields]).strip()
 
     def predict_text(self, text: str, k: int = 1) -> List[Any]:
         return self.predict_texts([text], k)[0]

@@ -59,16 +59,12 @@ class TestModule:
             Module.from_string(input, label_prefix=label_prefix, delimiters=delimiters)
 
     @pytest.mark.parametrize(
-        "input,label_prefix,delimiter,expected",
+        "input,delimiter,expected",
         [
-            (Module(section=1, module=1), "__label__", "_", "__label__S1_M1"),
-            (Module(section=1, module=1), "__label__", ".", "__label__S1.M1"),
-            (Module(section=10, module=10), "__label__", ".", "__label__S10.M10"),
+            (Module(section=1, module=1), "_", "S1_M1"),
+            (Module(section=1, module=1), ".", "S1.M1"),
+            (Module(section=10, module=10), ".", "S10.M10"),
         ],
     )
-    def test_fasttext(
-        self, input: Module, label_prefix: str, delimiter: str, expected: str
-    ):
-        assert (
-            input.fasttext(label_prefix=label_prefix, delimiter=delimiter) == expected
-        )
+    def test_to_string(self, input: Module, delimiter: str, expected: str):
+        assert input.to_string(delimiter=delimiter) == expected
