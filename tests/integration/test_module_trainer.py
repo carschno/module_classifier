@@ -1,6 +1,5 @@
 import logging
 import os
-from contextlib import contextmanager
 from csv import DictWriter
 from distutils.util import strtobool
 from tempfile import NamedTemporaryFile
@@ -9,7 +8,7 @@ from typing import Dict, List
 import pytest
 from fasttext import FastText
 from src.module_classifier.preprocessing.settings import CLASS_FIELD, TEXT_FIELDS
-from src.module_classifier.training import Trainer
+from src.module_classifier.training.module_trainer import ModuleTrainer
 from src.module_classifier.training.settings import TRAINING_PARAMS
 
 from ..conftest import does_not_raise
@@ -85,7 +84,7 @@ TEST_QUANTIZATION: bool = strtobool(os.environ.get("TEST_QUANTIZATION", "False")
     ],
 )
 def test_write_training_file(input: List[Dict[str, str]], expected: List[str]):
-    trainer = Trainer()
+    trainer = ModuleTrainer()
     fieldnames = {column for row in input for column in row.keys()}
 
     with NamedTemporaryFile("w") as csvfile, NamedTemporaryFile(
@@ -184,7 +183,7 @@ def test_train_model(caplog, input, quantize, expected_labels, expected_words):
     if quantize and not TEST_QUANTIZATION:
         pytest.skip("Skipping quantization test case.")
 
-    trainer = Trainer(cpus=1, training_parameters={**TRAINING_PARAMS, "epoch": 1})
+    trainer = ModuleTrainer(cpus=1, training_parameters={**TRAINING_PARAMS, "epoch": 1})
 
     with NamedTemporaryFile("w") as csvfile, NamedTemporaryFile(
         delete=False
@@ -212,4 +211,4 @@ def test_train_model(caplog, input, quantize, expected_labels, expected_words):
 )
 def test_cpus(cpus, expected_exception):
     with expected_exception:
-        Trainer(cpus=cpus)
+        ModuleTrainer(cpus=cpus)

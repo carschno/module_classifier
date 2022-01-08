@@ -1,18 +1,17 @@
-import csv
 import logging
 import os
+from abc import ABC, abstractmethod
 from tempfile import NamedTemporaryFile
 from typing import IO, Dict, Iterable, Optional
 
 import fasttext
 from fasttext import FastText
 
-from ..classification import ModuleClassifier
-from ..preprocessing.settings import CLASS_FIELD, DEFAULT_MODULE_DELIMITER, TEXT_FIELDS
+from ..preprocessing.settings import CLASS_FIELD, TEXT_FIELDS
 from .settings import QUANTIZE, TRAINING_PARAMS
 
 
-class Trainer:
+class Trainer(ABC):
     def __init__(
         self,
         *,
@@ -75,60 +74,27 @@ class Trainer:
             else:
                 self._train_model(temp_file.name, target_file)
 
+    @abstractmethod
     def evaluate_model(
         self,
         input_file: str,
         model_file: str,
-        module_delimiter: str = DEFAULT_MODULE_DELIMITER,
+        module_delimiter: str,
         test_label: bool = False,
         **kwargs,
     ):
-        with NamedTemporaryFile("wt") as temp_file:
-            self._write_training_file(
-                input_file,
-                temp_file,
-                TEXT_FIELDS,
-                CLASS_FIELD,
-                module_delimiter=module_delimiter,
-            )
+        return NotImplemented
 
-            self.logger.info("Loading model from '%s'", model_file)
-            model: FastText._FastText = FastText.load_model(model_file)
-
-            return (
-                model.test_label(temp_file.name, **kwargs)
-                if test_label
-                else model.test(temp_file.name, **kwargs)
-            )
-
+    @abstractmethod
     def _write_training_file(
         self,
         input_file: str,
         target_file: IO[str],
         text_fields: Iterable[str],
         class_field: str,
-        module_delimiter: str = DEFAULT_MODULE_DELIMITER,
+        **kwargs,
     ):
-        self.__logger.info(f"Reading input file '{input_file}'...")
-        self.__logger.info(
-            f"Writing temporary FastText file to '{target_file.name}'..."
-        )
-        with open(input_file, newline="") as csvfile:
-            reader = csv.DictReader(csvfile)
-
-            for row in reader:
-                if class_field in row:
-                    target_file.write(
-                        ModuleClassifier.fasttext_line(
-                            row,
-                            text_fields,
-                            class_field,
-                            module_delimiter=module_delimiter,
-                        )
-                    )
-                    target_file.write(os.linesep)
-
-        target_file.flush()
+        return NotImplemented
 
     def _train_model(self, training_file: str, target_file: Optional[str]) -> FastText:
         self.__logger.info(f"Training model. Arguments: {self.__params}")
