@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional, TypedDict
 
 from module_classifier.preprocessing.settings import DEFAULT_MODULE_DELIMITER
-from module_classifier.training.module_trainer import ModuleTrainer, Trainer
+from module_classifier.training.binary_trainer import MainEditionTrainer, Trainer
 
 
 class Stats(TypedDict):
@@ -33,11 +33,18 @@ class LabelOutput:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Evaluate a model against a file.")
     parser.add_argument(
-        "--input",
-        "-i",
-        type=argparse.FileType("r"),
+        "--main-edition-file",
+        type=argparse.FileType(),
+        metavar="FILE",
         required=True,
-        help="The input CSV file.",
+        help="The file containing the main edition items with `link_id` column.",
+    )
+    parser.add_argument(
+        "--archive-file",
+        type=argparse.FileType(),
+        metavar="FILE",
+        required=True,
+        help="The file containing the archive items with input texts.",
     )
     parser.add_argument(
         "--output",
@@ -56,14 +63,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--delimiter",
-        "-d",
-        type=str,
-        required=False,
-        help=f"The delimiter used in module labels as in 'S1.M1' or 'S1_M1'. If not given, uses default ('{DEFAULT_MODULE_DELIMITER}').",
-    )
-
-    parser.add_argument(
         "--labels", "-l", action="store_true", help="Run analysis per label."
     )
 
@@ -75,14 +74,14 @@ if __name__ == "__main__":
     if args.labels and args.output == sys.stdout:
         raise ValueError("Cannot output per label to stdout.")
 
-    trainer: Trainer = ModuleTrainer()
+    trainer: Trainer = MainEditionTrainer()
 
     evaluation_args = {
-        "input_file": args.input.name,
+        "input_file": args.archive_file.name,
         "model_file": args.model_file.name,
         "k": args.k,
         "threshold": args.threshold,
-        "module_delimiter": args.delimiter,
+        "main_edition_file": args.main_edition_file.name,
     }
 
     if args.labels:
@@ -99,7 +98,7 @@ if __name__ == "__main__":
             writer.writerow(LabelOutput(label=label, stats=Stats(**stats)).to_row())
 
     print(
-        f"Running evaluation for model '{args.model_file.name}' on data '{args.input.name}'."
+        f"Running evaluation for model '{args.model_file.name}' on data '{args.archive_file.name}'."
     )
     n, precision, recall = trainer.evaluate_model(**evaluation_args)
 
