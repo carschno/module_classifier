@@ -1,10 +1,16 @@
 import csv
 import os
 from tempfile import NamedTemporaryFile
-from typing import IO, Iterable
+from typing import IO, Iterable, Optional
+
+from fasttext import FastText
 
 from ..classification.binary_classifier import BinaryClassifier
 from ..preprocessing.archive_files import ArchiveFile, MainEditionFile, merge_data
+from ..preprocessing.settings import (
+    MAIN_EDITION_MERGED_LABEL_FIELD,
+    MAIN_EDITION_TEXT_FIELDS,
+)
 from . import Trainer
 
 
@@ -36,7 +42,7 @@ class BinaryTrainer(Trainer):
         self,
         input_file: str,
         model_file: str,
-        module_delimiter: str,
+        module_delimiter: Optional[str] = None,
         test_label: bool = False,
         **kwargs,
     ):
@@ -65,3 +71,31 @@ class MainEditionTrainer(BinaryTrainer):
         )
 
         os.remove(merged_file.name)
+
+    def evaluate_model(
+        self,
+        input_file: str,
+        model_file: str,
+        *,
+        main_edition_file: str,
+        class_field: str = MAIN_EDITION_MERGED_LABEL_FIELD,
+        test_label: bool = False,
+        **kwargs,
+    ):
+        with NamedTemporaryFile("wt", delete=False) as target_file:
+            self._write_training_file(
+                input_file,
+                target_file,
+                MAIN_EDITION_TEXT_FIELDS,
+                class_field,
+                main_edition_file,
+            )
+
+        model: FastText._FastText = FastText.load_model(model_file)
+
+        if test_label:
+            result = model.test_label(target_file.name, **kwargs)
+        else:
+            result = model.test(target_file.name, **kwargs)
+        os.remove(target_file.name)
+        return result

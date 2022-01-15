@@ -82,7 +82,7 @@ class Trainer(ABC):
         self,
         input_file: str,
         model_file: str,
-        module_delimiter: str,
+        module_delimiter: Optional[str] = None,
         test_label: bool = False,
         **kwargs,
     ):
