@@ -13,6 +13,15 @@ TEXT_FIELDS: Iterable[str] = (
     "yt_description",
 )
 
+MAIN_EDITION_TEXT_FIELDS: Iterable[str] = (
+    "publication_name",
+    "item_title",
+    "excerpt_ts",
+)
+MAIN_EDITION_MERGED_LABEL_FIELD: str = "label"
+MAIN_EDITION_ID_FIELD: str = "link_id"
+
+
 CLASS_FIELD: str = "module_id_for_all"
 MIN_TOKEN_LENGTH: int = 3
 PUNCTUATION_CHARACTERS: str = string.punctuation + "–‒—‘’”“"

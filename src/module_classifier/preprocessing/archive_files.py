@@ -1,5 +1,6 @@
 import csv
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, TextIO
+from typing import IO, Any, Dict, Iterator, List, Optional, Sequence, Set, TextIO
+from .settings import MAIN_EDITION_ID_FIELD, MAIN_EDITION_MERGED_LABEL_FIELD
 
 
 class ArchiveFile:
@@ -32,7 +33,7 @@ class MainEditionFile:
     def __init__(self, main_edition_file: TextIO) -> None:
         self._read_file(main_edition_file)
 
-    def _read_file(self, file: TextIO, id_field: str = "link_id"):
+    def _read_file(self, file: TextIO, id_field: str = MAIN_EDITION_ID_FIELD):
         reader = csv.DictReader(file)
         self._fieldnames: Optional[Sequence[str]] = reader.fieldnames
         self._rows: List[Dict[str, Any]] = [row for row in reader]
@@ -45,8 +46,8 @@ class MainEditionFile:
 def merge_data(
     archive_file: ArchiveFile,
     main_edition_file: MainEditionFile,
-    output_file: TextIO,
-    label_field: str = "label",
+    output_file: IO[str],
+    label_field: str = MAIN_EDITION_MERGED_LABEL_FIELD,
 ):
     """Merge two data files.
 

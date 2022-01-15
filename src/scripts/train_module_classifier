@@ -5,7 +5,7 @@ import sys
 from typing import List
 
 from module_classifier.preprocessing.settings import CLASS_FIELD, TEXT_FIELDS
-from module_classifier.training import Trainer
+from module_classifier.training.module_trainer import ModuleTrainer
 
 ENCODING = "UTF-8"
 
@@ -47,5 +47,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    trainer = Trainer()
-    trainer.train_model(args.input, args.output, text_fields=args.text_fields)
+    trainer = ModuleTrainer()
+    trainer.train_model(
+        args.input,
+        args.output,
+        text_fields=args.text_fields,
+        class_field=args.class_field,
+    )

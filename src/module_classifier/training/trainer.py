@@ -51,6 +51,7 @@ class Trainer(ABC):
         text_fields: Iterable[str] = TEXT_FIELDS,
         class_field: str = CLASS_FIELD,
         quantize: bool = QUANTIZE,
+        **kwargs,
     ):
         """Train a module classifier model from a CSV file.
 
@@ -67,7 +68,9 @@ class Trainer(ABC):
 
         """
         with NamedTemporaryFile("wt") as temp_file:
-            self._write_training_file(input_file, temp_file, text_fields, class_field)
+            self._write_training_file(
+                input_file, temp_file, text_fields, class_field, **kwargs
+            )
             if quantize:
                 model: FastText = self._train_model(temp_file.name, None)
                 self._quantize(model, temp_file.name, target_file)
