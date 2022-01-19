@@ -99,3 +99,43 @@ class MainEditionTrainer(BinaryTrainer):
             result = model.test(target_file.name, **kwargs)
         os.remove(target_file.name)
         return result
+
+    # TODO: implement in super-class(es)
+    def autotune(
+        self,
+        training_archive_file: str,
+        validation_archive_file: str,
+        main_edition_file: str,
+        target_file: str,
+        *,
+        text_fields: Iterable[str] = MAIN_EDITION_TEXT_FIELDS,
+        class_field: str = MAIN_EDITION_MERGED_LABEL_FIELD,
+        autotune_model_size: Optional[int] = None,
+    ) -> FastText:
+        with NamedTemporaryFile("wt") as training, NamedTemporaryFile(
+            "wt"
+        ) as validation:
+            self._write_training_file(
+                training_archive_file,
+                training,
+                text_fields,
+                class_field,
+                main_edition_file=main_edition_file,
+            )
+            self._write_training_file(
+                validation_archive_file,
+                validation,
+                text_fields,
+                class_field,
+                main_edition_file=main_edition_file,
+            )
+            training_params = {"autotuneValidationFile": validation.name}
+            if autotune_model_size is not None:
+                training_params["autotuneModelSize"] = f"{autotune_model_size}M"
+
+            model: FastText = self._train_model(
+                training.name,
+                target_file,
+                training_params=training_params,
+            )
+        return model
