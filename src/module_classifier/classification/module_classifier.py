@@ -1,8 +1,6 @@
 from dataclasses import dataclass
-from hashlib import md5
 from typing import Dict, Iterable, List
 
-import fasttext
 import numpy as np
 
 from ..preprocessing import Module, clean
@@ -139,9 +137,3 @@ class ModuleClassifier(Classifier):
         local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
     ):
         return super().from_s3(bucket, object_name, local_path)
-
-    @staticmethod
-    def get_hash(filename: str) -> str:
-        with open(filename, "rb") as f:
-            new_hash: str = md5(f.read()).hexdigest()
-        return new_hash
