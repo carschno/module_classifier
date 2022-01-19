@@ -2,7 +2,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from tempfile import NamedTemporaryFile
-from typing import IO, Dict, Iterable, Optional
+from typing import IO, Any, Dict, Iterable, Optional
 
 import fasttext
 from fasttext import FastText
@@ -27,17 +27,6 @@ class Trainer(ABC):
         """
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__logger.setLevel(logging.INFO)
-
-        self.__params = training_parameters
-        if cpus:
-            cpu_count = os.cpu_count()
-            if cpu_count is not None and cpus > cpu_count:
-                raise ValueError(
-                    f"Requested number of CPUs ({cpus}) must not exceed "
-                    f"number of available CPUs ({cpu_count})."
-                )
-            else:
-                self.__params["thread"] = cpus
 
     @property
     def logger(self) -> logging.Logger:
@@ -99,9 +88,14 @@ class Trainer(ABC):
     ):
         return NotImplemented
 
-    def _train_model(self, training_file: str, target_file: Optional[str]) -> FastText:
-        self.__logger.info(f"Training model. Arguments: {self.__params}")
-        model = fasttext.train_supervised(training_file, **self.__params)
+    def _train_model(
+        self,
+        training_file: str,
+        target_file: Optional[str],
+        training_params: Dict[str, Any] = TRAINING_PARAMS,
+    ) -> FastText:
+        self.__logger.info(f"Training model. Arguments: {training_params}")
+        model = fasttext.train_supervised(training_file, **training_params)
         if target_file:
             self.__logger.info(f"Writing trained model to file '{target_file}'...")
             model.save_model(target_file)
