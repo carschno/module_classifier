@@ -1,12 +1,7 @@
-import logging
-import os
-import urllib.request
 from dataclasses import dataclass
 from hashlib import md5
-from posixpath import splitext
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List
 
-import boto3
 import fasttext
 import numpy as np
 
@@ -64,7 +59,7 @@ class Predictions:
 
 class ModuleClassifier(Classifier):
     def __init__(self, model_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
-        self.model = fasttext.load_model(path=model_path)
+        return super().__init__(model_path)
 
     @property
     def modules(self) -> List[Module]:
@@ -137,47 +132,13 @@ class ModuleClassifier(Classifier):
         return Classifier.fasttext_line(row, text_fields, class_field)
 
     @classmethod
-    def download(cls, url: str, local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
-        if os.path.exists(local_path):
-            logging.info(
-                f"Local file '{local_path}' already exists, skipping download."
-            )
-        else:
-            logging.info(f"Downloading model from '{url}' to '{local_path}'.")
-            with open(local_path, "wb") as f, urllib.request.urlopen(url) as response:
-                f.write(response.read())
-
-        expected_hash: str = splitext(local_path)[1][1:]
-        if len(expected_hash) == 32:
-            if ModuleClassifier.get_hash(local_path) != expected_hash:
-                raise ValueError(
-                    f"Expected hash '{expected_hash}' does not match dowloaded model file."
-                )
-        else:
-            logging.warning(
-                f"Model file name should end with MD5 sum; invalid hash: '{expected_hash}'"
-            )
-        return cls(local_path)
-
-    @classmethod
     def from_s3(
         cls,
         bucket: str,
         object_name: str,
         local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
     ):
-        if os.path.exists(local_path):
-            logging.info(
-                f"Local file '{local_path}' already exists, skipping download."
-            )
-        else:
-            logging.info(
-                f"Downloading model from 's3://{bucket}/{object_name}' to '{local_path}'."
-            )
-            s3 = boto3.client("s3")
-            s3.download_file(bucket, object_name, local_path)
-
-        return cls(local_path)
+        return super().from_s3(bucket, object_name, local_path)
 
     @staticmethod
     def get_hash(filename: str) -> str:
