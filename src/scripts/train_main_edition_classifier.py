@@ -30,6 +30,19 @@ if __name__ == "__main__":
         help="The file containing the archive items with input texts.",
     )
     parser.add_argument(
+        "--validation-file",
+        type=argparse.FileType(),
+        metavar="FILE",
+        required=False,
+        help="If given, run hyperparameter tuning on the validation file.",
+    )
+    parser.add_argument(
+        "--autotuneModelSize",
+        type=int,
+        required=False,
+        help="When using autotuning, the model size to optimize against in Megabytes.",
+    )
+    parser.add_argument(
         "--output",
         "-o",
         type=argparse.FileType("wb"),
@@ -51,11 +64,24 @@ if __name__ == "__main__":
 
     trainer = MainEditionTrainer()
 
-    trainer.train_model(
-        args.archive_file.name,
-        args.output.name,
-        text_fields=args.text_fields,
-        class_field=MAIN_EDITION_MERGED_LABEL_FIELD,
-        main_edition_file=args.main_edition_file.name,
-        quantize=args.quantize,
-    )
+    if args.validation_file:
+        trainer.autotune(
+            training_archive_file=args.archive_file.name,
+            validation_archive_file=args.validation_file.name,
+            main_edition_file=args.main_edition_file.name,
+            target_file=args.output.name,
+            text_fields=args.text_fields,
+            class_field=MAIN_EDITION_MERGED_LABEL_FIELD,
+            autotune_model_size=args.autotuneModelSize,
+        )
+    else:
+        if args.autotuneModelSize:
+            raise argparse.ArgumentError("Not doing hyperparamter optimization.")
+        trainer.train_model(
+            args.archive_file.name,
+            args.output.name,
+            text_fields=args.text_fields,
+            class_field=MAIN_EDITION_MERGED_LABEL_FIELD,
+            main_edition_file=args.main_edition_file.name,
+            quantize=args.quantize,
+        )
