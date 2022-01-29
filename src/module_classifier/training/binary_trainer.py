@@ -112,6 +112,7 @@ class MainEditionTrainer(BinaryTrainer):
         class_field: str = MAIN_EDITION_MERGED_LABEL_FIELD,
         autotune_model_size: Optional[int] = None,
     ) -> FastText:
+
         with NamedTemporaryFile("wt") as training, NamedTemporaryFile(
             "wt"
         ) as validation:

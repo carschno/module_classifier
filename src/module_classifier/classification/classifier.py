@@ -68,8 +68,9 @@ class Classifier(ABC):
         return np.array(all_probs)
 
     @classmethod
-    @abstractmethod
-    def from_s3(cls, bucket: str, object_name: str, local_path: str):
+    def from_s3(
+        cls, bucket: str, object_name: str, local_path: str, check_md5: bool = False
+    ) -> "Classifier":
         if os.path.exists(local_path):
             logging.info(
                 f"Local file '{local_path}' already exists, skipping download."
@@ -81,4 +82,5 @@ class Classifier(ABC):
             s3 = boto3.client("s3")
             s3.download_file(bucket, object_name, local_path)
 
+        # TODO: check MD5
         return cls(local_path)
