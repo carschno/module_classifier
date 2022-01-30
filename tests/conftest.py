@@ -3,12 +3,12 @@ from pathlib import Path
 from typing import Optional
 
 from src.module_classifier.classification.settings import (
-    MODULE_CLASSIFIER_DEFAULT_MODEL,
+    MODULE_CLASSIFIER_DEFAULT_MODEL_PATH,
 )
 
 CWD: Path = Path(__file__).parent
 
-TEST_MODEL: Optional[str] = MODULE_CLASSIFIER_DEFAULT_MODEL
+TEST_MODEL: Optional[str] = MODULE_CLASSIFIER_DEFAULT_MODEL_PATH
 TEST_ARCHIVE_FILE: Path = CWD / "data" / "test_archive_items.csv"
 TEST_MAIN_EDITION_ITEMS_FILE: Path = CWD / "data" / "test_main_edition_items.csv"
 

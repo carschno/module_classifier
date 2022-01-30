@@ -203,12 +203,3 @@ def test_train_model(caplog, input, quantize, expected_labels, expected_words):
     assert sorted(model.labels) == sorted(expected_labels)
     assert sorted(model.words) == sorted(expected_words)
     os.remove(out)
-
-
-@pytest.mark.parametrize(
-    "cpus,expected_exception",
-    [(1, does_not_raise()), (1000000, pytest.raises(ValueError))],
-)
-def test_cpus(cpus, expected_exception):
-    with expected_exception:
-        ModuleTrainer(cpus=cpus)

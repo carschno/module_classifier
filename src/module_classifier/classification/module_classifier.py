@@ -12,7 +12,11 @@ from ..preprocessing.settings import (
     TEXT_FIELDS,
 )
 from .classifier import Classifier
-from .settings import MODULE_CLASSIFIER_DEFAULT_MODEL
+from .settings import (
+    AWS_S3_MODELS_BUCKET,
+    MODULE_CLASSIFIER_DEFAULT_MODEL_PATH,
+    MODULE_CLASSIFIER_MODEL_FILE,
+)
 
 
 @dataclass
@@ -56,7 +60,7 @@ class Predictions:
 
 
 class ModuleClassifier(Classifier):
-    def __init__(self, model_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL):
+    def __init__(self, model_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL_PATH):
         return super().__init__(model_path)
 
     @property
@@ -132,8 +136,10 @@ class ModuleClassifier(Classifier):
     @classmethod
     def from_s3(
         cls,
-        bucket: str,
-        object_name: str,
-        local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
-    ):
+        bucket: str = AWS_S3_MODELS_BUCKET,
+        object_name: str = MODULE_CLASSIFIER_MODEL_FILE,
+        local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL_PATH,
+        check_md5=True,
+    ) -> Classifier:
+
         return super().from_s3(bucket, object_name, local_path)
