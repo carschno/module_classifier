@@ -2,23 +2,23 @@
 
 This is a Python module for a module classifier for The Syllabus.
 
-## Classification
+## Module Classification
 
 ### Usage
 
 
-To predict the module(s) for a text, use the `Classifier.predict_text()`
+To predict the module(s) for a text, use the `ModuleClassifier.predict_text()`
  method:
 ```
-from module_classifier.classification import Classifier
+from module_classifier.classification.module_classifier import ModuleClassifier
 
-classifier = Classifier() # use the default model
+classifier = ModuleClassifier() # use the default model on disk
 
 # Or download the model from S3 and use it (uses local copy if already present):
-classifier = Classifier.from_s3("my_bucket", "my_object")
+classifier = ModuleClassifier.from_s3()
 
 # Alternatively, specify a custom model file:
-classifier = Classifier(model_path=model_file_path)
+classifier = ModuleClassifier(model_path=model_file_path)
 
 classifier.predict_text("This text is about automation and AI", k=3)
 
@@ -38,6 +38,24 @@ The `predict_row()` method expects a row from a CSV file in the form of a
 dictionary as input.
 It extracts the text fields and returns the same output format.
 
+## Main Edition Classifier
+
+The Main Edition Classifier is a binary classifier that estimates whether an item is suitable for the main edition.
+It returns a single prediction, either `True` or `False`, along with a probability score.
+
+### Usage
+
+Usage is essentially the same as for the module classifier above:
+
+```
+from module_classifier.classification.binary_classifier import MainEditionClassifier
+
+c = MainEditionClassifier.from_s3()
+
+classifier.predict_text("This text is about automation and AI")
+```
+
+The classifier also implements the same additional methods, such as `predict_row()` and `predict_texts()`.
 ## Explanation
 
 ### Command Line Tool
