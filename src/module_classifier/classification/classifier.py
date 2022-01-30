@@ -83,4 +83,6 @@ class Classifier(ABC):
             s3.download_file(bucket, object_name, local_path)
 
         # TODO: check MD5
+        if check_md5:
+            logging.warning("Checking MD5 sum is not implemented.")
         return cls(local_path)

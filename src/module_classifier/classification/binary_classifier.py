@@ -5,6 +5,11 @@ from ..preprocessing.settings import (
     MAIN_EDITION_TEXT_FIELDS,
 )
 from .classifier import Classifier
+from .settings import (
+    AWS_S3_MODELS_BUCKET,
+    MAIN_EDITION_CLASSIFIER_MODEL_FILE_NAME,
+    MODULE_CLASSIFIER_DEFAULT_MODEL,
+)
 
 
 class BinaryClassifier(Classifier):
@@ -29,3 +34,14 @@ class MainEditionClassifier(BinaryClassifier):
 
         # TODO: remove this method (no need to override)
         return Classifier.fasttext_line(row, text_fields, class_field, **kwargs)
+
+    @classmethod
+    def from_s3(
+        cls,
+        bucket: str = AWS_S3_MODELS_BUCKET,
+        object_name: str = MAIN_EDITION_CLASSIFIER_MODEL_FILE_NAME,
+        local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
+        check_md5: bool = True,
+    ) -> "MainEditionClassifier":
+        
+        return super().from_s3(bucket, object_name, local_path, check_md5)
