@@ -1,6 +1,7 @@
 from typing import Dict, Iterable, List, Tuple
 
 from ..preprocessing.settings import (
+    LABEL_PREFIX,
     MAIN_EDITION_MERGED_LABEL_FIELD,
     MAIN_EDITION_TEXT_FIELDS,
 )
@@ -8,7 +9,7 @@ from .classifier import Classifier
 from .settings import (
     AWS_S3_MODELS_BUCKET,
     MAIN_EDITION_CLASSIFIER_MODEL_FILE_NAME,
-    MODULE_CLASSIFIER_DEFAULT_MODEL,
+    MAIN_EDITION_CLASSIFIER_MODEL_PATH,
 )
 
 
@@ -22,7 +23,10 @@ class MainEditionClassifier(BinaryClassifier):
 
     def _predict(self, texts: List[str], k: int) -> List[Tuple[str, float]]:
         labels, probs = self.model.predict(texts, k)
-        return [(label, float(prob)) for label, prob in zip(labels, probs)]
+        return [
+            (label[0][len(LABEL_PREFIX) :], float(prob))
+            for label, prob in zip(labels, probs)
+        ]
 
     @staticmethod
     def fasttext_line(
@@ -40,8 +44,8 @@ class MainEditionClassifier(BinaryClassifier):
         cls,
         bucket: str = AWS_S3_MODELS_BUCKET,
         object_name: str = MAIN_EDITION_CLASSIFIER_MODEL_FILE_NAME,
-        local_path: str = MODULE_CLASSIFIER_DEFAULT_MODEL,
+        local_path: str = MAIN_EDITION_CLASSIFIER_MODEL_PATH,
         check_md5: bool = True,
-    ) -> "MainEditionClassifier":
-        
+    ) -> Classifier:
+
         return super().from_s3(bucket, object_name, local_path, check_md5)

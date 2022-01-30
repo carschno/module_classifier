@@ -1,4 +1,8 @@
+import os
+from tempfile import TemporaryDirectory
+
 import pytest
+from src.module_classifier.classification import Classifier
 from src.module_classifier.classification.module_classifier import ModuleClassifier
 
 from ..conftest import does_not_raise
@@ -72,3 +76,34 @@ def test_init():
 def test_fasttext_line(row, columns, expected, exception):
     with exception:
         assert ModuleClassifier.fasttext_line(row, columns) == expected
+
+
+@pytest.mark.parametrize(
+    "filename,content,expected,exception",
+    [
+        ("test_file", b"", None, pytest.raises(ValueError)),
+        ("test_file.00000000000000000000000000000000", b"", False, does_not_raise()),
+        ("test_file.d41d8cd98f00b204e9800998ecf8427e", b"", True, does_not_raise()),
+        (
+            "test_file.d41d8cd98f00b204e9800998ecf8427e",
+            b"some text",
+            False,
+            does_not_raise(),
+        ),
+        (
+            "test_file.552e21cd4cd9918678e3c1a0df491bc3",
+            b"some text",
+            True,
+            does_not_raise(),
+        ),
+    ],
+)
+def test_validate_md5(filename, content, expected, exception):
+    with TemporaryDirectory() as tmpdirname:
+        filename = os.path.join(tmpdirname, filename)
+
+        with open(filename, "wb") as test_file:
+            test_file.write(content)
+            test_file.flush()
+            with exception:
+                assert Classifier.validate_md5(test_file.name) == expected

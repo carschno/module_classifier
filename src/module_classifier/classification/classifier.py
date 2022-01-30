@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -71,18 +72,34 @@ class Classifier(ABC):
     def from_s3(
         cls, bucket: str, object_name: str, local_path: str, check_md5: bool = False
     ) -> "Classifier":
-        if os.path.exists(local_path):
+
+        if os.path.exists(local_path) and (
+            not check_md5 or Classifier.validate_md5(local_path)
+        ):
             logging.info(
-                f"Local file '{local_path}' already exists, skipping download."
+                f"Model file '{local_path}' already exists. Skipping download."
             )
         else:
             logging.info(
                 f"Downloading model from 's3://{bucket}/{object_name}' to '{local_path}'."
             )
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
             s3 = boto3.client("s3")
             s3.download_file(bucket, object_name, local_path)
 
-        # TODO: check MD5
-        if check_md5:
-            logging.warning("Checking MD5 sum is not implemented.")
         return cls(local_path)
+
+    @staticmethod
+    def validate_md5(filename: str) -> bool:
+        if not os.path.isfile(filename):
+            raise ValueError(f"'{filename}' does not exist or is not a file.")
+
+        _, extension = os.path.splitext(filename)
+        extension = extension[1:]
+        if len(extension) != 32:
+            raise ValueError(
+                f"File '{filename}' does not have a valid MD5 sum extension ('{extension}')."
+            )
+        with open(filename, "rb") as f:
+            md5: str = hashlib.md5(f.read()).hexdigest()
+        return md5 == extension
