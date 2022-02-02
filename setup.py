@@ -31,5 +31,5 @@ setuptools.setup(
         "lime>=0.2.0,<0.3.0",
         "boto3>=1.20.0,<1.21.0",
     ],
-    extras_require={"testing": ["pytest==6.1.0", "pytest-mock==3.3.1"]},
+    extras_require={"testing": ["pytest>=6.2.5,<6.3.0", "pytest-mock==3.3.1"]},
 )
