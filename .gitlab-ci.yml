@@ -28,12 +28,18 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
 
+stages:
+  - test
+  - release
+
 test:
+  stage: test
   script:
     - pip install -e ".[testing]"
     - pytest -vvv tests/unit/
 
-build:
+package:
+  stage: release
   script:
     - python setup.py bdist_wheel
   artifacts:
