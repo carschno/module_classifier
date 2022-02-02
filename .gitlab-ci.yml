@@ -38,4 +38,4 @@ build:
     - python setup.py bdist_wheel
   artifacts:
     paths:
-      - dists/*.whl
+      - dist/*.whl
