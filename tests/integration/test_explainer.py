@@ -5,6 +5,7 @@ from src.module_classifier.explanation import Explainer
 from ..conftest import TEST_MODEL
 
 
+@pytest.mark.skipif(TEST_MODEL is None, reason="'TEST_MODEL' not specified.")
 def test_explain():
     expected = {
         3: [
