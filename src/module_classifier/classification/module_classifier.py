@@ -123,6 +123,7 @@ class ModuleClassifier(Classifier):
         class_field: str = CLASS_FIELD,
         *,
         module_delimiter: str = DEFAULT_MODULE_DELIMITER,
+        **kwargs,
     ) -> str:
 
         if class_field in row:
@@ -142,4 +143,4 @@ class ModuleClassifier(Classifier):
         check_md5=True,
     ) -> Classifier:
 
-        return super().from_s3(bucket, object_name, local_path)
+        return super().from_s3(bucket, object_name, local_path, check_md5)

@@ -7,6 +7,8 @@ from typing import Any, Dict, Iterable, List
 import boto3
 import fasttext
 import numpy as np
+from botocore import UNSIGNED
+from botocore.client import Config
 from fasttext.FastText import _FastText
 
 from ..preprocessing import clean
@@ -84,7 +86,8 @@ class Classifier(ABC):
                 f"Downloading model from 's3://{bucket}/{object_name}' to '{local_path}'."
             )
             os.makedirs(os.path.dirname(local_path), exist_ok=True)
-            s3 = boto3.client("s3")
+            s3 = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+
             s3.download_file(bucket, object_name, local_path)
 
         return cls(local_path)

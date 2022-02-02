@@ -18,13 +18,11 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_data={"module_classifier": ["data/classifier.model.ftz"]},
     scripts=[
         "src/scripts/train_module_classifier",
         "src/scripts/explain",
         "src/scripts/train_main_edition_classifier.py",
     ],
-    include_package_data=True,
     python_requires=">=3.8",
     # conda install -c conda-forge fasttext
     install_requires=[
