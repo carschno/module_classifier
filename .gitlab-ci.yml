@@ -32,3 +32,10 @@ test:
   script:
     - pip install -e ".[testing]"
     - pytest -vvv tests/unit/
+
+build:
+  script:
+    - python setup.py bdist_wheel
+  artifacts:
+    paths:
+      - dists/*.whl
