@@ -63,6 +63,11 @@ class Classifier(ABC):
     ) -> List[Any]:
         return self._predict([self.fasttext_line(row, columns) for row in rows], k)
 
+    def predict_row(
+        self, row: Dict[str, str], k: int = 1, columns: Iterable[str] = ()
+    ) -> List[Any]:
+        return self.predict_rows([row], k)[0]
+
     def prediction_probs(self, texts: List[str], k: int) -> np.ndarray:
         predictions: List[Any] = self.predict_texts(texts, k)
         all_probs: List[np.ndarray] = [
