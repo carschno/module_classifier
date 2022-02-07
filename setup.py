@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="module_classifier",
-    version="0.4.0",
+    version="0.4.1",
     author="Carsten Schnober",
     author_email="carschno@gmail.com",
     description="API for The Syllabus modules classifier.",
