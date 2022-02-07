@@ -40,6 +40,8 @@ test:
 
 package:
   stage: release
+  only:
+    - tags
   script:
     - python setup.py bdist_wheel
   artifacts:
