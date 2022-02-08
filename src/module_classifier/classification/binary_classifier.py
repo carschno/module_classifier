@@ -1,3 +1,4 @@
+from distutils.util import strtobool
 from typing import Dict, Iterable, List, Tuple
 
 from ..preprocessing.settings import (
@@ -14,17 +15,19 @@ from .settings import (
 
 
 class BinaryClassifier(Classifier):
-    pass
+    @staticmethod
+    def _deserialize_label(label: str) -> bool:
+        return bool(strtobool(label[len(LABEL_PREFIX) :]))
 
 
 class MainEditionClassifier(BinaryClassifier):
-    def predict_texts(self, texts: List[str], k: int = 1) -> List[Tuple[str, float]]:
+    def predict_texts(self, texts: List[str], k: int = 1) -> List[Tuple[bool, float]]:
         return self._predict(texts, k)
 
-    def _predict(self, texts: List[str], k: int) -> List[Tuple[str, float]]:
+    def _predict(self, texts: List[str], k: int) -> List[Tuple[bool, float]]:
         labels, probs = self.model.predict(texts, k)
         return [
-            (label[0][len(LABEL_PREFIX) :], float(prob))
+            (self._deserialize_label(label[0]), float(prob))
             for label, prob in zip(labels, probs)
         ]
 

@@ -9,15 +9,15 @@ class TestMainEditionClassifier:
         "texts,expected",
         [
             ([], []),
-            ([""], [("False", pytest.approx(1.0, abs=0.001))]),
-            (["test"], [("False", pytest.approx(1.0, abs=0.001))]),
+            ([""], [(False, pytest.approx(1.0, abs=0.001))]),
+            (["test"], [(False, pytest.approx(1.0, abs=0.001))]),
         ],
     )
     def test_predict_texts(self, texts, expected):
         assert self.classifier.predict_texts(texts) == expected
 
     @pytest.mark.parametrize(
-        "text,expected", [("", ("False", pytest.approx(1.0, abs=0.001)))]
+        "text,expected", [("", (False, pytest.approx(1.0, abs=0.001)))]
     )
     def test_predict_text(self, text, expected):
         assert self.classifier.predict_text(text) == expected
