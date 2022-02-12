@@ -23,28 +23,34 @@ cache:
     - venv/
 
 before_script:
-  - python --version # For debugging
+  - python --version  # For debugging
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
-  - pip install --upgrade pip
-
-stages:
-  - test
-  - release
 
 test:
-  stage: test
   script:
-    - pip install -e ".[testing]"
-    - pytest -vvv tests/unit/
+    - python setup.py test
+    - pip install tox flake8  # you can also use tox
+    - tox -e py36,flake8
 
-package:
-  stage: release
-  only:
-    - tags
-  before_script:
-    - pip install twine
+run:
   script:
     - python setup.py bdist_wheel
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --verbose --non-interactive --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/module_classifier-${CI_COMMIT_TAG}-py3-none-any.whl 
+    # an alternative approach is to install and run:
+    - pip install dist/*
+    # run the command here
+  artifacts:
+    paths:
+      - dist/*.whl
+
+pages:
+  script:
+    - pip install sphinx sphinx-rtd-theme
+    - cd doc ; make html
+    - mv build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
