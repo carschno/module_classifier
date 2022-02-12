@@ -30,7 +30,6 @@ before_script:
 
 stages:
   - test
-  - package
   - release
 
 test:
@@ -40,7 +39,7 @@ test:
     - pytest -vvv tests/unit/
 
 package:
-  stage: package
+  stage: release
   only:
     - tags
   script:
@@ -51,9 +50,11 @@ package:
 
 upload:
   stage: release
+  only:
+    - tags
   dependencies:
     - package
   before_script:
     - pip install twine
   script:
-    - python -m twine upload --repository gitlab dist/module_classifier-${CI_COMMIT_TAG}-py3-none-any.whl --config-file /tmp/.pypirc
+    - python -m twine upload --repository gitlab dist/module_classifier-${CI_COMMIT_TAG}-py3-none-any.whl --config-file ${PYPIRC}
