@@ -1,6 +1,6 @@
 # module-classifier
 
-This is a Python module for a module classifier for The Syllabus.
+This is a Python application for a module (topic/category) classifier for The Syllabus.
 
 ## Module Classification
 
